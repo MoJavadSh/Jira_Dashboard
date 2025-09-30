@@ -9,16 +9,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5572b80b-267c-4028-8181-f012de080fd8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.JiraDashboard/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Data/AppDbContext.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/JiraDashboard.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/JiraDashboard.http" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/JiraDashboard.sln" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Program.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Properties/launchSettings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/appsettings.Development.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/appsettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,6 +31,13 @@
     &quot;accountId&quot;: &quot;b4bc0719-4f1f-4e81-9651-02e85e0060d4&quot;
   }
 }</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Data/AppDbContext.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Data/AppDbContext.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Data/AppDbContext.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Models/IssueStatus.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Models/IssueStatus.cs" root0="SKIP_HIGHLIGHTING" />
+  </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -50,21 +48,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.JiraDashboard: http">
     <configuration name="JiraDashboard: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/JiraDashboard.csproj" />
@@ -106,6 +104,7 @@
       <updated>1702287846744</updated>
       <workItem from="1758891270560" duration="635000" />
       <workItem from="1759126635663" duration="2962000" />
+      <workItem from="1759136731431" duration="10540000" />
     </task>
     <task id="LOCAL-00001" summary="Creating Project &#10;- Configure Project">
       <option name="closed" value="true" />
@@ -115,7 +114,31 @@
       <option name="project" value="LOCAL" />
       <updated>1759128733751</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Add Models for UserBarChart">
+      <option name="closed" value="true" />
+      <created>1759211163937</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1759211163937</updated>
+    </task>
+    <task id="LOCAL-00003" summary="DbSet for each Model&#10;- Map Models to Tables">
+      <option name="closed" value="true" />
+      <created>1759214380530</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1759214380530</updated>
+    </task>
+    <task id="LOCAL-00004" summary=".">
+      <option name="closed" value="true" />
+      <created>1759214566021</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1759214566021</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -124,11 +147,38 @@
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="main" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -137,7 +187,10 @@
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Creating Project &#10;- Configure Project" />
-    <option name="LAST_COMMIT_MESSAGE" value="" />
+    <MESSAGE value="Add Models for UserBarChart" />
+    <MESSAGE value="DbSet for each Model&#10;- Map Models to Tables" />
+    <MESSAGE value="." />
+    <option name="LAST_COMMIT_MESSAGE" value="." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
