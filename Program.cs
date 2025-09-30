@@ -1,4 +1,6 @@
+using JiraDashboard;
 using JiraDashboard.Data;
+using JiraDashboard.Repository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +10,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("JiraDumpConnection")));
 
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IJiraRepository, JiraRepository>();
 
 var app = builder.Build();
 
