@@ -9,7 +9,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5572b80b-267c-4028-8181-f012de080fd8" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Interfaces/IJiraRepository.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Repository/JiraRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.JiraDashboard/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.JiraDashboard/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,6 +37,7 @@
     <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Data/AppDbContext.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Data/AppDbContext.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Data/AppDbContext.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Dtos/IssueTypeCountDto.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Models/IssueStatus.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Models/IssueStatus.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
@@ -104,7 +107,7 @@
       <updated>1702287846744</updated>
       <workItem from="1758891270560" duration="635000" />
       <workItem from="1759126635663" duration="2962000" />
-      <workItem from="1759136731431" duration="10540000" />
+      <workItem from="1759136731431" duration="12811000" />
     </task>
     <task id="LOCAL-00001" summary="Creating Project &#10;- Configure Project">
       <option name="closed" value="true" />
@@ -138,7 +141,23 @@
       <option name="project" value="LOCAL" />
       <updated>1759214566021</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary=" update gitignore">
+      <option name="closed" value="true" />
+      <created>1759214739614</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1759214739614</updated>
+    </task>
+    <task id="LOCAL-00006" summary="create Dto to return issuetype counts grouped by AssigneeName">
+      <option name="closed" value="true" />
+      <created>1759214998191</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1759214998191</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -190,7 +209,9 @@
     <MESSAGE value="Add Models for UserBarChart" />
     <MESSAGE value="DbSet for each Model&#10;- Map Models to Tables" />
     <MESSAGE value="." />
-    <option name="LAST_COMMIT_MESSAGE" value="." />
+    <MESSAGE value=" update gitignore" />
+    <MESSAGE value="create Dto to return issuetype counts grouped by AssigneeName" />
+    <option name="LAST_COMMIT_MESSAGE" value="create Dto to return issuetype counts grouped by AssigneeName" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
