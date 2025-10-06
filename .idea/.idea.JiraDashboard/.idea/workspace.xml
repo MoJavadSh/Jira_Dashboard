@@ -10,12 +10,7 @@
   <component name="ChangeListManager">
     <list default="true" id="5572b80b-267c-4028-8181-f012de080fd8" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/Controllers/JiraController.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models/AppUser.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.JiraDashboard/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.JiraDashboard/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Data/AppDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Data/AppDbContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JiraDashboard.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JiraDashboard.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Properties/launchSettings.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Repository/JiraRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Repository/JiraRepository.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -44,11 +39,10 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Data/AppDbContext.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Data/AppDbContext.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Data/AppDbContext.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Dtos/IssueTypeCountDto.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Models/IssueStatus.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Models/IssueStatus.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Properties/launchSettings.json" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Repository/JiraRepository.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Repository/JiraRepository.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -119,7 +113,7 @@
       <workItem from="1758891270560" duration="635000" />
       <workItem from="1759126635663" duration="2962000" />
       <workItem from="1759136731431" duration="24136000" />
-      <workItem from="1759496397116" duration="22228000" />
+      <workItem from="1759496397116" duration="22578000" />
     </task>
     <task id="LOCAL-00001" summary="Creating Project &#10;- Configure Project">
       <option name="closed" value="true" />
@@ -185,7 +179,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759217820357</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="add AppUser.cs to make a bridge from issuetype to CwdUsers&#10;- and some settings">
+      <option name="closed" value="true" />
+      <created>1759736364728</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1759736364728</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -241,7 +243,8 @@
     <MESSAGE value="create Dto to return issuetype counts grouped by AssigneeName" />
     <MESSAGE value="feat: implement JiraRepository to fetch and group Jira issue data by assignee and type" />
     <MESSAGE value="Add Repository to DI" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add Repository to DI" />
+    <MESSAGE value="add AppUser.cs to make a bridge from issuetype to CwdUsers&#10;- and some settings" />
+    <option name="LAST_COMMIT_MESSAGE" value="add AppUser.cs to make a bridge from issuetype to CwdUsers&#10;- and some settings" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
