@@ -16,23 +16,25 @@ public class JiraRepository : IJiraRepository
     public async Task<List<UserBarChartDto>> GetAssigneeIssueDetailsAsync()
     {
         // query to get datas
-        var rawQuery = from issue in _context.JiraIssues
-            join user in _context.CwdUsers on issue.Assignee equals user.UserName into userJoin
+        var query = from task in _context.JiraIssues
+                .AsNoTracking() 
+            join appUser in _context.AppUsers on task.Assignee equals appUser.UserKey into appUserJoin
+            from appUser in appUserJoin.DefaultIfEmpty() 
+            join user in _context.CwdUsers on appUser.LowerUserName equals user.UserName.ToLower() into userJoin
             from user in userJoin.DefaultIfEmpty()
-            join issueType in _context.IssueTypes on issue.IssueType equals issueType.Id
-            group issue by new 
-            { 
-                AssigneeName = user != null ? user.DisplayName : "Unassigned", 
-                issueType.PName 
+            join issueType in _context.IssueTypes on task.IssueType equals issueType.Id
+            group task by new
+            {
+                AssigneeName = user != null ? user.DisplayName : "Un Assigned",
+                IssueTypeName = issueType.PName
             } into g
             select new
-            {
-                AssigneeName = g.Key.AssigneeName,
-                IssueTypeName = g.Key.PName,
+            { 
+                g.Key.AssigneeName,
+                g.Key.IssueTypeName,
                 Count = g.Count()
             };
-
-        var grouped = await rawQuery
+        var join = await query
             .GroupBy(x => x.AssigneeName)
             .Select(g => new UserBarChartDto
             {
@@ -45,7 +47,7 @@ public class JiraRepository : IJiraRepository
             })
             .ToListAsync();
 
-        return grouped;
+        return join;
     }
 }
 
