@@ -9,9 +9,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5572b80b-267c-4028-8181-f012de080fd8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Controllers/JiraController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/AppDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Data/AppDbContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Repository/JiraRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Repository/JiraRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.JiraDashboard/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.JiraDashboard/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -113,7 +111,7 @@
       <workItem from="1758891270560" duration="635000" />
       <workItem from="1759126635663" duration="2962000" />
       <workItem from="1759136731431" duration="24136000" />
-      <workItem from="1759496397116" duration="22578000" />
+      <workItem from="1759496397116" duration="28930000" />
     </task>
     <task id="LOCAL-00001" summary="Creating Project &#10;- Configure Project">
       <option name="closed" value="true" />
@@ -187,7 +185,23 @@
       <option name="project" value="LOCAL" />
       <updated>1759736364728</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="fix problem of map Id in dbcontext">
+      <option name="closed" value="true" />
+      <created>1759736511043</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1759736511043</updated>
+    </task>
+    <task id="LOCAL-00011" summary="add controller">
+      <option name="closed" value="true" />
+      <created>1759736523217</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1759736523217</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -244,7 +258,9 @@
     <MESSAGE value="feat: implement JiraRepository to fetch and group Jira issue data by assignee and type" />
     <MESSAGE value="Add Repository to DI" />
     <MESSAGE value="add AppUser.cs to make a bridge from issuetype to CwdUsers&#10;- and some settings" />
-    <option name="LAST_COMMIT_MESSAGE" value="add AppUser.cs to make a bridge from issuetype to CwdUsers&#10;- and some settings" />
+    <MESSAGE value="fix problem of map Id in dbcontext" />
+    <MESSAGE value="add controller" />
+    <option name="LAST_COMMIT_MESSAGE" value="add controller" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -261,19 +277,6 @@
           <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
           <option name="timeStamp" value="3" />
         </breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/Controllers/JiraController.cs</url>
-          <line>20</line>
-          <properties documentPath="$PROJECT_DIR$/Controllers/JiraController.cs" containingFunctionPresentation="Method 'GetUserBarChart'">
-            <startOffsets>
-              <option value="479" />
-            </startOffsets>
-            <endOffsets>
-              <option value="535" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
