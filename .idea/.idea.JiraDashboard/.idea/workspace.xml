@@ -9,14 +9,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5572b80b-267c-4028-8181-f012de080fd8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Interfaces/IJiraRepository.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Repository/JiraRepository.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Controllers/JiraController.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Models/AppUser.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.JiraDashboard/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.JiraDashboard/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/AppDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Data/AppDbContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JiraDashboard.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JiraDashboard.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Properties/launchSettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Repository/JiraRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Repository/JiraRepository.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DpaMonitoringSettings">
+    <option name="firstShow" value="false" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -40,6 +48,7 @@
     <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Dtos/IssueTypeCountDto.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Models/IssueStatus.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Models/IssueStatus.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Program.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -51,22 +60,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Launch Settings Profile.JiraDashboard: http.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Launch Settings Profile.JiraDashboard: https.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
-  <component name="RunManager" selected=".NET Launch Settings Profile.JiraDashboard: http">
+}</component>
+  <component name="RunManager" selected=".NET Launch Settings Profile.JiraDashboard: https">
     <configuration name="JiraDashboard: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/JiraDashboard.csproj" />
       <option name="LAUNCH_PROFILE_TFM" value="net9.0" />
@@ -107,7 +118,8 @@
       <updated>1702287846744</updated>
       <workItem from="1758891270560" duration="635000" />
       <workItem from="1759126635663" duration="2962000" />
-      <workItem from="1759136731431" duration="12811000" />
+      <workItem from="1759136731431" duration="24136000" />
+      <workItem from="1759496397116" duration="22228000" />
     </task>
     <task id="LOCAL-00001" summary="Creating Project &#10;- Configure Project">
       <option name="closed" value="true" />
@@ -157,7 +169,23 @@
       <option name="project" value="LOCAL" />
       <updated>1759214998191</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="feat: implement JiraRepository to fetch and group Jira issue data by assignee and type">
+      <option name="closed" value="true" />
+      <created>1759217069080</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1759217069080</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Add Repository to DI">
+      <option name="closed" value="true" />
+      <created>1759217820357</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1759217820357</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -211,7 +239,9 @@
     <MESSAGE value="." />
     <MESSAGE value=" update gitignore" />
     <MESSAGE value="create Dto to return issuetype counts grouped by AssigneeName" />
-    <option name="LAST_COMMIT_MESSAGE" value="create Dto to return issuetype counts grouped by AssigneeName" />
+    <MESSAGE value="feat: implement JiraRepository to fetch and group Jira issue data by assignee and type" />
+    <MESSAGE value="Add Repository to DI" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add Repository to DI" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -228,6 +258,19 @@
           <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
           <option name="timeStamp" value="3" />
         </breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/Controllers/JiraController.cs</url>
+          <line>20</line>
+          <properties documentPath="$PROJECT_DIR$/Controllers/JiraController.cs" containingFunctionPresentation="Method 'GetUserBarChart'">
+            <startOffsets>
+              <option value="479" />
+            </startOffsets>
+            <endOffsets>
+              <option value="535" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>

@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<CwdUser> CwdUsers { get; set; }
     public DbSet<IssueType> IssueTypes { get; set; }
     public DbSet<IssueStatus> IssueStatuses { get; set; }
+    public DbSet<AppUser> AppUsers { get; set; }
     
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -51,6 +52,15 @@ public class AppDbContext : DbContext
             entity.HasKey(I => I.Id);
             entity.Property(e => e.Id).HasColumnType("varchar(255)");
             entity.Property(e => e.PName).HasColumnName("p_name").HasColumnType("varchar(255)");
+        });
+        
+        modelBuilder.Entity<AppUser>(entity =>
+        {
+            entity.ToTable("app_user", "public");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnName("id").HasColumnType("bigint");
+            entity.Property(e => e.UserKey).HasColumnName("user_key").HasColumnType("varchar(255)");
+            entity.Property(e => e.LowerUserName).HasColumnName("lower_user_name").HasColumnType("varchar(255)");
         });
     }
 }
