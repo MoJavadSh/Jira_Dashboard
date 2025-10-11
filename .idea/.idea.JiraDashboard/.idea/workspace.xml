@@ -111,7 +111,7 @@
       <workItem from="1758891270560" duration="635000" />
       <workItem from="1759126635663" duration="2962000" />
       <workItem from="1759136731431" duration="24136000" />
-      <workItem from="1759496397116" duration="28930000" />
+      <workItem from="1759496397116" duration="40593000" />
     </task>
     <task id="LOCAL-00001" summary="Creating Project &#10;- Configure Project">
       <option name="closed" value="true" />
@@ -201,7 +201,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759736523217</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary=".">
+      <option name="closed" value="true" />
+      <created>1759750748175</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1759750748175</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -235,7 +243,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="main" />
+                        <option value="HEAD" />
                       </list>
                     </value>
                   </entry>
@@ -252,7 +260,6 @@
     <MESSAGE value="Creating Project &#10;- Configure Project" />
     <MESSAGE value="Add Models for UserBarChart" />
     <MESSAGE value="DbSet for each Model&#10;- Map Models to Tables" />
-    <MESSAGE value="." />
     <MESSAGE value=" update gitignore" />
     <MESSAGE value="create Dto to return issuetype counts grouped by AssigneeName" />
     <MESSAGE value="feat: implement JiraRepository to fetch and group Jira issue data by assignee and type" />
@@ -260,7 +267,8 @@
     <MESSAGE value="add AppUser.cs to make a bridge from issuetype to CwdUsers&#10;- and some settings" />
     <MESSAGE value="fix problem of map Id in dbcontext" />
     <MESSAGE value="add controller" />
-    <option name="LAST_COMMIT_MESSAGE" value="add controller" />
+    <MESSAGE value="." />
+    <option name="LAST_COMMIT_MESSAGE" value="." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

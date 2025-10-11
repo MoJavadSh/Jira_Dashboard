@@ -13,7 +13,7 @@ public class JiraRepository : IJiraRepository
         _context = context;
     }
 
-    public async Task<List<UserBarChartDto>> GetAssigneeIssueDetailsAsync()
+    public async Task<List<UserBarChartDto>> GetUserBatChartAsync()
     {
         // query to get datas
         var query = from task in _context.JiraIssues

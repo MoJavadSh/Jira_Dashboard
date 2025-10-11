@@ -4,5 +4,6 @@ namespace JiraDashboard;
 
 public interface IJiraRepository
 {
-    Task<List<UserBarChartDto>> GetAssigneeIssueDetailsAsync();
+    Task<List<UserBarChartDto>> GetUserBatChartAsync();
+    
 }

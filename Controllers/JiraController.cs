@@ -18,7 +18,7 @@ public class JiraController : ControllerBase
         [HttpGet("UserBarChart")]
         public async Task<ActionResult<List<UserBarChartDto>>> GetUserBarChart()
         {
-            var result = await _repo.GetAssigneeIssueDetailsAsync();
+            var result = await _repo.GetUserBatChartAsync();
             return Ok(result);
         }
 }
