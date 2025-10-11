@@ -9,7 +9,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5572b80b-267c-4028-8181-f012de080fd8" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Dtos/UserIssueCountDto.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.JiraDashboard/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.JiraDashboard/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controllers/JiraController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/JiraController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Interfaces/IJiraRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Interfaces/IJiraRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JiraDashboard.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JiraDashboard.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Repository/JiraRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Repository/JiraRepository.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,7 +116,7 @@
       <workItem from="1758891270560" duration="635000" />
       <workItem from="1759126635663" duration="2962000" />
       <workItem from="1759136731431" duration="24136000" />
-      <workItem from="1759496397116" duration="40593000" />
+      <workItem from="1759496397116" duration="44469000" />
     </task>
     <task id="LOCAL-00001" summary="Creating Project &#10;- Configure Project">
       <option name="closed" value="true" />
@@ -209,7 +214,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759750748175</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="change method name">
+      <option name="closed" value="true" />
+      <created>1760164137303</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1760164137303</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -268,7 +281,8 @@
     <MESSAGE value="fix problem of map Id in dbcontext" />
     <MESSAGE value="add controller" />
     <MESSAGE value="." />
-    <option name="LAST_COMMIT_MESSAGE" value="." />
+    <MESSAGE value="change method name" />
+    <option name="LAST_COMMIT_MESSAGE" value="change method name" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

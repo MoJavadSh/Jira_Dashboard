@@ -21,4 +21,10 @@ public class JiraController : ControllerBase
             var result = await _repo.GetUserBatChartAsync();
             return Ok(result);
         }
+        
+        [HttpGet("UserIssueCount")]
+        public async Task<ActionResult<List<UserIssueCountDto>>> GetChart1()
+        {
+            return await _repo.GetUserIssueCountAsync();
+        }
 }
