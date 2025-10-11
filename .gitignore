@@ -52,3 +52,7 @@ Migrations/
 *.tmp
 *.dbmdl
 *.dbproj.schemaview
+
+# Rider / IntelliJ
+.idea/workspace.xml
+.idea/shelf/
