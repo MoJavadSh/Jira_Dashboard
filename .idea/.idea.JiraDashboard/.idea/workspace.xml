@@ -11,9 +11,8 @@
     <list default="true" id="5572b80b-267c-4028-8181-f012de080fd8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.JiraDashboard/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.JiraDashboard/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Controllers/JiraController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/JiraController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dtos/IssueTypeCountDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Dtos/IssueTypeCountDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Interfaces/IJiraRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Interfaces/IJiraRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Repository/JiraRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Repository/JiraRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JiraDashboard.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JiraDashboard.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -122,7 +121,7 @@
       <workItem from="1758891270560" duration="635000" />
       <workItem from="1759126635663" duration="2962000" />
       <workItem from="1759136731431" duration="24136000" />
-      <workItem from="1759496397116" duration="47000000" />
+      <workItem from="1759496397116" duration="48390000" />
     </task>
     <task id="LOCAL-00001" summary="Creating Project &#10;- Configure Project">
       <option name="closed" value="true" />
@@ -252,7 +251,23 @@
       <option name="project" value="LOCAL" />
       <updated>1760168847217</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="feat(chart): add IssueTypeCount">
+      <option name="closed" value="true" />
+      <created>1760170248132</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1760170248132</updated>
+    </task>
+    <task id="LOCAL-00018" summary="feat(chart): add filter for assigned and unassigned issues in IssueTypeCount API">
+      <option name="closed" value="true" />
+      <created>1760170471697</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1760170471697</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -315,7 +330,9 @@
     <MESSAGE value="Add UserIssueCount Chart &#10;- including dto - and repository change" />
     <MESSAGE value="add query object to implement filtering" />
     <MESSAGE value="using QueryObject to rfilter Unassigned from issues" />
-    <option name="LAST_COMMIT_MESSAGE" value="using QueryObject to rfilter Unassigned from issues" />
+    <MESSAGE value="feat(chart): add IssueTypeCount" />
+    <MESSAGE value="feat(chart): add filter for assigned and unassigned issues in IssueTypeCount API" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(chart): add filter for assigned and unassigned issues in IssueTypeCount API" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -1,3 +1,4 @@
+using System.Reflection;
 using JiraDashboard;
 using JiraDashboard.Data;
 using JiraDashboard.Repository;
@@ -11,8 +12,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("JiraDumpConnection")));
 
-builder.Services.AddSwaggerGen();
-
+builder.Services.AddSwaggerGen(options =>
+{
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    options.IncludeXmlComments(xmlPath);
+});
 builder.Services.AddScoped<IJiraRepository, JiraRepository>();
 
 var app = builder.Build();

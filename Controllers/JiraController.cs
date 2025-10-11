@@ -16,6 +16,9 @@ public class JiraController : ControllerBase
             _repo = repo;
         }
 
+        /// <summary>
+        /// Chart : Issue Types of each Assignee, count
+        /// </summary>
         [HttpGet("UserBarChart")]
         public async Task<ActionResult<List<UserBarChartDto>>> GetUserBarChart()
         {
@@ -23,12 +26,18 @@ public class JiraController : ControllerBase
             return Ok(result);
         }
         
+        /// <summary>
+        /// Chart : Issue Count of each Assignee
+        /// </summary>
         [HttpGet("UserIssueCount")]
         public async Task<ActionResult<List<UserIssueCountDto>>> GetUserIssueCountChart([FromQuery] QueryObject query)
         {
             return await _repo.GetUserIssueCountAsync(query);
         }
 
+        /// <summary>
+        /// Chart : count of each IssueType
+        /// </summary>
         [HttpGet("IssueTypeCount")]
         public async Task<ActionResult<List<IssueTypeCountDto>>> GetIssueTypeCount([FromQuery] QueryObject query)
         {
