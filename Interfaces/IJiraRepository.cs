@@ -7,5 +7,5 @@ public interface IJiraRepository
 {
     Task<List<UserBarChartDto>> GetUserBatChartAsync();
     Task<List<UserIssueCountDto>> GetUserIssueCountAsync(QueryObject query);
-    Task<List<IssueTypeCountDto>> GetIssueTypeCountAsync();
+    Task<List<IssueTypeCountDto>> GetIssueTypeCountAsync(QueryObject query);
 }

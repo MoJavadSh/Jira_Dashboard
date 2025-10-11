@@ -84,7 +84,7 @@ public class JiraRepository : IJiraRepository
             
     }
 
-    public async Task<List<IssueTypeCountDto>> GetIssueTypeCountAsync()
+    public async Task<List<IssueTypeCountDto>> GetIssueTypeCountAsync(QueryObject query)
     {
         var data = from task in _context.JiraIssues.AsNoTracking()
             join issueType in _context.IssueTypes on task.IssueType equals issueType.Id
@@ -92,6 +92,7 @@ public class JiraRepository : IJiraRepository
             from appUser in appUserJoin.DefaultIfEmpty()
             join user in _context.CwdUsers on appUser.LowerUserName equals user.UserName.ToLower() into userJoin
             from user in userJoin.DefaultIfEmpty()
+            where !query.ExcludeUnassigned || user != null // filter
             group task by issueType.PName into g
             select new
             {

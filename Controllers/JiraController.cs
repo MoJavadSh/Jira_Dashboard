@@ -30,8 +30,8 @@ public class JiraController : ControllerBase
         }
 
         [HttpGet("IssueTypeCount")]
-        public async Task<ActionResult<List<IssueTypeCountDto>>> GetIssueTypeCount()
+        public async Task<ActionResult<List<IssueTypeCountDto>>> GetIssueTypeCount([FromQuery] QueryObject query)
         {
-            return await _repo.GetIssueTypeCountAsync();
+            return await _repo.GetIssueTypeCountAsync(query);
         }
 }
