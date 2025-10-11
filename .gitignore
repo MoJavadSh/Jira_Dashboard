@@ -56,3 +56,5 @@ Migrations/
 # Rider / IntelliJ
 .idea/
 *.iml
+.idea/workspace.xml
+.idea/shelf/

@@ -53,7 +53,7 @@ public class AppDbContext : DbContext
             entity.ToTable("issuestatus", "public");
             entity.HasKey(I => I.Id);
             entity.Property(e => e.Id).HasColumnName("id").HasColumnType("varchar(255)");
-            entity.Property(e => e.PName).HasColumnName("p_name").HasColumnType("varchar(255)");
+            entity.Property(e => e.PName).HasColumnName("pname").HasColumnType("varchar(255)");
         });
         
         modelBuilder.Entity<AppUser>(entity =>

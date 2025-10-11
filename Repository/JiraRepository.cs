@@ -113,5 +113,39 @@ public class JiraRepository : IJiraRepository
 
         return finalResults;
     }
-}
+
+    public async Task<List<IssueTypeProgressDto>> GetIssueTypeProgressAsync()
+    {
+        var rawQuery = from task in _context.JiraIssues.AsNoTracking()
+                       join issueType in _context.IssueTypes on task.IssueType equals issueType.Id
+                       join status in _context.IssueStatuses on task.IssueStatus equals status.Id
+                       join appUser in _context.AppUsers on task.Assignee equals appUser.UserKey into appUserJoin
+                       from appUser in appUserJoin.DefaultIfEmpty()
+                       join user in _context.CwdUsers on appUser.LowerUserName equals user.UserName.ToLower() into userJoin
+                       from user in userJoin.DefaultIfEmpty()
+                       group task by new { IssueTypeName = issueType.PName, StatusName = status.PName } into g
+                       select new
+                       {
+                           g.Key.IssueTypeName,
+                           g.Key.StatusName,
+                           Count = g.Count()
+                       };
+
+        var results = await rawQuery.ToListAsync();
+
+        var grouped = results
+            .GroupBy(x => x.IssueTypeName)
+            .Select(g => new IssueTypeProgressDto
+            {
+                IssueTypeName = g.Key,
+                Statuses = g.Select(x => new StatusCountDto
+                {
+                    StatusName = x.StatusName,
+                    Count = x.Count
+                }).ToList()
+            })
+            .ToList();
+
+        return grouped;
+    }}
 
