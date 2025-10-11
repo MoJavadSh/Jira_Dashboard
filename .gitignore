@@ -54,5 +54,5 @@ Migrations/
 *.dbproj.schemaview
 
 # Rider / IntelliJ
-.idea/workspace.xml
-.idea/shelf/
+.idea/
+*.iml
