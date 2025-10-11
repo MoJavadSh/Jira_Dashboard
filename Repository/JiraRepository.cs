@@ -44,7 +44,8 @@ public class JiraRepository : IJiraRepository
                 IssueTypes = g.Select(x => new IssueTypeCountDto
                 {
                     IssueTypeName = x.IssueTypeName,
-                    Count = x.Count
+                    Count = x.Count,
+                    Percentage = null
                 }).ToList()
             })
             .ToListAsync();
