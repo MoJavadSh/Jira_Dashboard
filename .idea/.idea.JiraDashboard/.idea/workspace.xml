@@ -11,6 +11,7 @@
     <list default="true" id="5572b80b-267c-4028-8181-f012de080fd8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.JiraDashboard/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.JiraDashboard/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Controllers/JiraController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/JiraController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dtos/IssueTypeCountDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Dtos/IssueTypeCountDto.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Interfaces/IJiraRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Interfaces/IJiraRepository.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Repository/JiraRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Repository/JiraRepository.cs" afterDir="false" />
     </list>
@@ -38,10 +39,17 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Controllers/JiraController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Controllers/JiraController.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Data/AppDbContext.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Data/AppDbContext.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Dtos/IssueTypeCountDto.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Interfaces/IJiraRepository.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Interfaces/IJiraRepository.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Program.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Properties/launchSettings.json" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Repository/JiraRepository.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Repository/JiraRepository.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Repository/JiraRepository.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/MoJavad/Dev/Projects/CSharp/DotNet/Jira/Jira_Dashboard/Repository/JiraRepository.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
@@ -114,7 +122,7 @@
       <workItem from="1758891270560" duration="635000" />
       <workItem from="1759126635663" duration="2962000" />
       <workItem from="1759136731431" duration="24136000" />
-      <workItem from="1759496397116" duration="45413000" />
+      <workItem from="1759496397116" duration="47000000" />
     </task>
     <task id="LOCAL-00001" summary="Creating Project &#10;- Configure Project">
       <option name="closed" value="true" />
@@ -236,7 +244,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760167802691</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="using QueryObject to rfilter Unassigned from issues">
+      <option name="closed" value="true" />
+      <created>1760168847217</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1760168847217</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -298,7 +314,8 @@
     <MESSAGE value="change method name" />
     <MESSAGE value="Add UserIssueCount Chart &#10;- including dto - and repository change" />
     <MESSAGE value="add query object to implement filtering" />
-    <option name="LAST_COMMIT_MESSAGE" value="add query object to implement filtering" />
+    <MESSAGE value="using QueryObject to rfilter Unassigned from issues" />
+    <option name="LAST_COMMIT_MESSAGE" value="using QueryObject to rfilter Unassigned from issues" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

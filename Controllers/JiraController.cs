@@ -24,8 +24,14 @@ public class JiraController : ControllerBase
         }
         
         [HttpGet("UserIssueCount")]
-        public async Task<ActionResult<List<UserIssueCountDto>>> GetChart1([FromQuery] QueryObject query)
+        public async Task<ActionResult<List<UserIssueCountDto>>> GetUserIssueCountChart([FromQuery] QueryObject query)
         {
             return await _repo.GetUserIssueCountAsync(query);
+        }
+
+        [HttpGet("IssueTypeCount")]
+        public async Task<ActionResult<List<IssueTypeCountDto>>> GetIssueTypeCount()
+        {
+            return await _repo.GetIssueTypeCountAsync();
         }
 }
