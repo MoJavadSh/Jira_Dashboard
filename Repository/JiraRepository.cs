@@ -1,5 +1,6 @@
 using JiraDashboard.Data;
 using JiraDashboard.Dtos;
+using JiraDashboard.Helpers;
 using JiraDashboard.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -51,17 +52,19 @@ public class JiraRepository : IJiraRepository
         return join;
     }
 
-    public async Task<List<UserIssueCountDto>> GetUserIssueCountAsync()
+    public async Task<List<UserIssueCountDto>> GetUserIssueCountAsync(QueryObject query)
     {
         var data = from task in _context.JiraIssues.AsNoTracking()
             join AppUser in _context.AppUsers on task.Assignee equals AppUser.UserKey into appUserJoin
             from appUser in appUserJoin.DefaultIfEmpty()
             join user in _context.CwdUsers on appUser.Id equals user.Id into userJoin
             from user in userJoin.DefaultIfEmpty()
-            group task by (user != null ? user.DisplayName : "Un Assigned") into g
+            join issueType in _context.IssueTypes on task.IssueType equals issueType.Id
+            where !query.ExcludeUnassigned || user != null
+            group task by new {AssigneeName = user != null ? user.DisplayName : "Un Assigned"} into g
             select new
             {
-                AssigneeName = g.Key,
+                AssigneeName = g.Key.AssigneeName,
                 Count = g.Count()
             };
         

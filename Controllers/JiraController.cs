@@ -1,4 +1,5 @@
 using JiraDashboard.Dtos;
+using JiraDashboard.Helpers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JiraDashboard.Controllers;
@@ -23,8 +24,8 @@ public class JiraController : ControllerBase
         }
         
         [HttpGet("UserIssueCount")]
-        public async Task<ActionResult<List<UserIssueCountDto>>> GetChart1()
+        public async Task<ActionResult<List<UserIssueCountDto>>> GetChart1([FromQuery] QueryObject query)
         {
-            return await _repo.GetUserIssueCountAsync();
+            return await _repo.GetUserIssueCountAsync(query);
         }
 }
