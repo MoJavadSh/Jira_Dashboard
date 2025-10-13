@@ -43,10 +43,13 @@ public class JiraController : ControllerBase
         {
             return await _repo.GetIssueTypeCountAsync(query);
         }
-        
+    
+        /// <summary>
+        /// Chart : Progress. Of each issue type
+        /// </summary>
         [HttpGet("IssueTypeProgress")]
-        public async Task<ActionResult<List<IssueTypeProgressDto>>> GetIssueTypeProgressChart()
+        public async Task<ActionResult<List<IssueTypeProgressDto>>> GetIssueTypeProgressChart([FromQuery] QueryObject query)
         {
-            return await _repo.GetIssueTypeProgressAsync();
+            return await _repo.GetIssueTypeProgressAsync(query);
         }
 }

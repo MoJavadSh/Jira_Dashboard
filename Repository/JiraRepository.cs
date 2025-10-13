@@ -114,7 +114,7 @@ public class JiraRepository : IJiraRepository
         return finalResults;
     }
 
-    public async Task<List<IssueTypeProgressDto>> GetIssueTypeProgressAsync()
+    public async Task<List<IssueTypeProgressDto>> GetIssueTypeProgressAsync(QueryObject query)
     {
         var rawQuery = from task in _context.JiraIssues.AsNoTracking()
                        join issueType in _context.IssueTypes on task.IssueType equals issueType.Id
@@ -123,6 +123,9 @@ public class JiraRepository : IJiraRepository
                        from appUser in appUserJoin.DefaultIfEmpty()
                        join user in _context.CwdUsers on appUser.LowerUserName equals user.UserName.ToLower() into userJoin
                        from user in userJoin.DefaultIfEmpty()
+                        where (string.IsNullOrEmpty(query.IssueTypeFilter) || task.IssueType == query.IssueTypeFilter) 
+                           && (!query.ExcludeUnassigned || user != null) 
+                           && (string.IsNullOrEmpty(query.StatusFilter) || task.IssueStatus == query.StatusFilter)
                        group task by new { IssueTypeName = issueType.PName, StatusName = status.PName } into g
                        select new
                        {
