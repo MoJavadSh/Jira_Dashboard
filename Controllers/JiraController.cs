@@ -1,3 +1,4 @@
+using System.Net;
 using JiraDashboard.Dtos;
 using JiraDashboard.Helpers;
 using Microsoft.AspNetCore.Mvc;
@@ -20,10 +21,12 @@ public class JiraController : ControllerBase
         /// Chart : Issue Types of each Assignee, count
         /// </summary>
         [HttpGet("UserBarChart")]
-        public async Task<ActionResult<List<UserBarChartDto>>> GetUserBarChart()
+        public async Task<ActionResult<ResponseDto>> GetUserBarChart([FromQuery] bool unAssign)
         {
-            var result = await _repo.GetUserBatChartAsync();
-            return Ok(result);
+            var result = await _repo.GetUserBatChartAsync(unAssign);
+            var response = GenerateResponse(HttpStatusCode.OK,"", result, result.Count);
+            return Ok(response);
+
         }
         
         /// <summary>
@@ -32,7 +35,9 @@ public class JiraController : ControllerBase
         [HttpGet("UserIssueCount")]
         public async Task<ActionResult<List<UserIssueCountDto>>> GetUserIssueCountChart([FromQuery] QueryObject query)
         {
-            return await _repo.GetUserIssueCountAsync(query);
+            var result = await _repo.GetUserIssueCountAsync(query);
+            var response = GenerateResponse(HttpStatusCode.OK, "", result, result.Count);
+            return Ok(response);
         }
 
         /// <summary>
@@ -41,7 +46,9 @@ public class JiraController : ControllerBase
         [HttpGet("IssueTypeCount")]
         public async Task<ActionResult<List<IssueTypeCountDto>>> GetIssueTypeCount([FromQuery] QueryObject query)
         {
-            return await _repo.GetIssueTypeCountAsync(query);
+            var result = await _repo.GetIssueTypeCountAsync(query);
+            var response = GenerateResponse(HttpStatusCode.OK, "", result, result.Count);
+            return Ok(response);
         }
     
         /// <summary>
@@ -50,6 +57,21 @@ public class JiraController : ControllerBase
         [HttpGet("IssueTypeProgress")]
         public async Task<ActionResult<List<IssueTypeProgressDto>>> GetIssueTypeProgressChart([FromQuery] QueryObject query)
         {
-            return await _repo.GetIssueTypeProgressAsync(query);
+            var result = await _repo.GetIssueTypeProgressAsync(query);
+            var response = GenerateResponse(HttpStatusCode.OK, "", result, result.Count);
+            return Ok(response);
         }
+        
+        private static ResponseDto GenerateResponse(HttpStatusCode statusCode, string message, object? result = null,
+            int total = 0, int page = 1, int perPage = 10)
+            => new()
+            {
+                StatusCode = (int)statusCode,
+                Message = new List<string>() { message },
+                Result = result,
+                Total = total,
+                Page = page,
+                PerPage = perPage
+            };
+
 }
