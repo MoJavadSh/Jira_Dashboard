@@ -5,4 +5,9 @@ public class AppUser
     public long Id { get; set; }
     public string UserKey { get; set; } 
     public string LowerUserName { get; set; } 
+    public ICollection<JiraIssue>? JiraIssue { get; set; }
+    
+    public CwdUser User { get; set; } // CwdUser (L Join)
+
+    
 }
