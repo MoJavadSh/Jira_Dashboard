@@ -1,3 +1,4 @@
+using System.Net;
 using JiraDashboard.Data;
 using JiraDashboard.Dtos;
 using JiraDashboard.Helpers;
@@ -15,28 +16,32 @@ public class JiraRepository : IJiraRepository
         _context = context;
     }
 
-    public async Task<List<UserBarChartDto>> GetUserBatChartAsync()
+    public async Task<List<UserBarChartDto>> GetUserBatChartAsync(bool unAssign)
     {
-        // query to get datas
-        var data = from task in _context.JiraIssues
-                .AsNoTracking() 
-            join appUser in _context.AppUsers on task.Assignee equals appUser.UserKey into appUserJoin
-            from appUser in appUserJoin.DefaultIfEmpty() 
-            join user in _context.CwdUsers on appUser.LowerUserName equals user.UserName.ToLower() into userJoin
-            from user in userJoin.DefaultIfEmpty()
-            join issueType in _context.IssueTypes on task.IssueType equals issueType.Id
-            group task by new
+        var s = _context.JiraIssues.AsNoTracking()
+            .Include(task => task.AppUser)
+            .ThenInclude(appUser => appUser.User)
+            .Include(task => task.IssueTypeObj)
+            .Select(task => new
             {
-                AssigneeName = user != null ? user.DisplayName : "Un Assigned",
-                IssueTypeName = issueType.PName
-            } into g
-            select new
-            { 
+                AssigneeName = task.AppUser != null && task.AppUser.User != null
+                    ? task.AppUser.User.DisplayName
+                    : "Un Assigned",
+                IssueTypeName = task.IssueTypeObj.PName
+            })
+            .Where(x=>unAssign == true ? x.AssigneeName != "Un Assigned":true)
+            .GroupBy(x => new { x.AssigneeName, x.IssueTypeName })
+            .Select(g => new
+            {
                 g.Key.AssigneeName,
                 g.Key.IssueTypeName,
-                Count = g.Count()
-            };
-        var join = await data
+                count = g.Count()
+            });
+
+
+        var result = await s.ToListAsync();
+        
+        var group = result
             .GroupBy(x => x.AssigneeName)
             .Select(g => new UserBarChartDto
             {
@@ -44,13 +49,12 @@ public class JiraRepository : IJiraRepository
                 IssueTypes = g.Select(x => new IssueTypeCountDto
                 {
                     IssueTypeName = x.IssueTypeName,
-                    Count = x.Count,
+                    Count = x.count,
                     Percentage = null
                 }).ToList()
             })
-            .ToListAsync();
-
-        return join;
+            .ToList();
+        return group;
     }
 
     public async Task<List<UserIssueCountDto>> GetUserIssueCountAsync(QueryObject query)
