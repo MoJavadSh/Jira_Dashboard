@@ -29,6 +29,28 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Assignee).HasColumnName("assignee").HasColumnType("varchar(255)"); 
             entity.Property(e => e.IssueType).HasColumnName("issuetype").HasColumnType("varchar(255)"); // property IssueType has column named issuetyoe in db
             entity.Property(e => e.IssueStatus).HasColumnName("issuestatus").HasColumnType("varchar(255)");
+            
+            // روابط
+            entity.HasOne(j => j.AppUser)
+                .WithMany()
+                .HasPrincipalKey(u => u.UserKey) // کلید اصلی در AppUser
+                .HasForeignKey(j => j.Assignee) // کلید خارجی در JiraIssue
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.IssueTypeObj)
+                .WithMany()
+                .HasForeignKey(e => e.IssueType)
+                .HasPrincipalKey(t => t.Id)
+                .IsRequired(true) 
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            entity.HasOne(e => e.IssueStatusObj)
+                .WithMany()
+                .HasForeignKey(e => e.IssueStatus)
+                .HasPrincipalKey(s => s.Id)
+                .IsRequired(true)
+                .OnDelete(DeleteBehavior.NoAction);
         });
 
         modelBuilder.Entity<CwdUser>(entity =>
@@ -63,6 +85,13 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Id).HasColumnName("id").HasColumnType("bigint");
             entity.Property(e => e.UserKey).HasColumnName("user_key").HasColumnType("varchar(255)");
             entity.Property(e => e.LowerUserName).HasColumnName("lower_user_name").HasColumnType("varchar(255)");
+            
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.LowerUserName)
+                .HasPrincipalKey(u => u.UserName)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.NoAction);
         });
     }
 }
