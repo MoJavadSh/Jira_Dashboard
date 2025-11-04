@@ -16,7 +16,7 @@ public class JiraRepository : IJiraRepository
         _context = context;
     }
 
-    public async Task<List<UserBarChartDto>> GetUserBatChartAsync(bool unAssign)
+    public async Task<List<UserBarChartDto>> GetUserBatChartAsync(bool unAssigned)
     {
         var s = _context.JiraIssues.AsNoTracking()
             .Include(task => task.AppUser)
@@ -29,7 +29,7 @@ public class JiraRepository : IJiraRepository
                     : "Un Assigned",
                 IssueTypeName = task.IssueTypeObj.PName
             })
-            .Where(x=>unAssign == true ? x.AssigneeName != "Un Assigned":true)
+            .Where(x=>unAssigned == true ? x.AssigneeName != "Un Assigned":true)
             .GroupBy(x => new { x.AssigneeName, x.IssueTypeName })
             .Select(g => new
             {
@@ -57,102 +57,119 @@ public class JiraRepository : IJiraRepository
         return group;
     }
 
-    public async Task<List<UserIssueCountDto>> GetUserIssueCountAsync(QueryObject query)
+    public async Task<List<UserIssueCountDto>> GetUserIssueCountAsync(bool unAssigned)
     {
-        var data = from task in _context.JiraIssues.AsNoTracking()
-            join AppUser in _context.AppUsers on task.Assignee equals AppUser.UserKey into appUserJoin
-            from appUser in appUserJoin.DefaultIfEmpty()
-            join user in _context.CwdUsers on appUser.Id equals user.Id into userJoin
-            from user in userJoin.DefaultIfEmpty()
-            join issueType in _context.IssueTypes on task.IssueType equals issueType.Id
-            where !query.ExcludeUnassigned || user != null
-            group task by new {AssigneeName = user != null ? user.DisplayName : "Un Assigned"} into g
-            select new
-            {
-                AssigneeName = g.Key.AssigneeName,
-                Count = g.Count()
-            };
+        var tasks = _context.JiraIssues.AsNoTracking();
         
-        var results = await data.ToListAsync();
-        
-        int totalIssues = results.Sum(r => r.Count);
-        
-        var finalResults = results.Select(r => new UserIssueCountDto
-        {
-            AssigneeName = r.AssigneeName,
-            IssueCount = r.Count,
-            Percentage = totalIssues > 0 ? Math.Round((double)r.Count / totalIssues * 100, 1) : 0
+        if (unAssigned)
+            tasks = tasks.Where(t => t.AppUser != null && t.AppUser.User != null);
+
+        tasks = tasks
+            .Include(task => task.AppUser)
+            .ThenInclude(appUser => appUser.User);
             
+        var task = await tasks
+            .GroupBy(task =>
+                task.AppUser != null && task.AppUser.User != null ? task.AppUser.User.DisplayName : "Un Assigned")
+            .Select(g => new
+            {
+                assigneeName = g.Key,
+                count = g.Count()
+            }).ToListAsync();
+            
+        int totalIssues = task.Sum(r => r.count);
+        var finalResults = task.Select(r => new UserIssueCountDto
+        {
+            AssigneeName = r.assigneeName,
+            IssueCount = r.count,
+            Percentage = totalIssues > 0 ? Math.Round((double)r.count / totalIssues * 100, 1) : 0,
         }).ToList();
 
         return finalResults;
-            
-    }
+    }    
 
-    public async Task<List<IssueTypeCountDto>> GetIssueTypeCountAsync(QueryObject query)
+    public async Task<List<IssueTypeCountDto>> GetIssueTypeCountAsync(bool unAssigned)
     {
-        var data = from task in _context.JiraIssues.AsNoTracking()
-            join issueType in _context.IssueTypes on task.IssueType equals issueType.Id
-            join appUser in _context.AppUsers on task.Assignee equals appUser.UserKey into appUserJoin
-            from appUser in appUserJoin.DefaultIfEmpty()
-            join user in _context.CwdUsers on appUser.LowerUserName equals user.UserName.ToLower() into userJoin
-            from user in userJoin.DefaultIfEmpty()
-            where !query.ExcludeUnassigned || user != null // filter
-            group task by issueType.PName into g
-            select new
+        var tasks = _context.JiraIssues.AsNoTracking();
+        
+        if (unAssigned) 
+            tasks = tasks.Where(t => t.AppUser != null && t.AppUser.User != null);
+
+         tasks = tasks
+            .Include(t => t.IssueTypeObj)
+            .Include(t => t.AppUser)
+            .ThenInclude(appUser => appUser.User);
+         
+        var task = await tasks
+            .GroupBy(t => t.IssueTypeObj.PName)
+            .Select(g => new
             {
                 IssueTypeName = g.Key,
                 Count = g.Count()
-            };   
-        var results = await data.ToListAsync();
-        
-        int totalIssues = results.Sum(r => r.Count);
-        
-        var finalResults = results.Select(r => new IssueTypeCountDto
+            })
+            .ToListAsync();
+
+        int totalIssues = task.Sum(r => r.Count);
+
+        var result = task.Select(r => new IssueTypeCountDto
         {
             IssueTypeName = r.IssueTypeName,
             Count = r.Count,
             Percentage = totalIssues > 0 ? Math.Round((double)r.Count / totalIssues * 100, 1) : 0
         }).ToList();
 
-        return finalResults;
+        return result;
     }
 
-    public async Task<List<IssueTypeProgressDto>> GetIssueTypeProgressAsync(QueryObject query)
+    public async Task<List<IssueTypeProgressDto>> GetIssueTypeProgressAsync(string issueType, bool unAssigned)
     {
-        var rawQuery = from task in _context.JiraIssues.AsNoTracking()
-                       join issueType in _context.IssueTypes on task.IssueType equals issueType.Id
-                       join status in _context.IssueStatuses on task.IssueStatus equals status.Id
-                       join appUser in _context.AppUsers on task.Assignee equals appUser.UserKey into appUserJoin
-                       from appUser in appUserJoin.DefaultIfEmpty()
-                       join user in _context.CwdUsers on appUser.LowerUserName equals user.UserName.ToLower() into userJoin
-                       from user in userJoin.DefaultIfEmpty()
-                        where (string.IsNullOrEmpty(query.IssueTypeFilter) || task.IssueType == query.IssueTypeFilter) 
-                           && (!query.ExcludeUnassigned || user != null) 
-                           && (string.IsNullOrEmpty(query.StatusFilter) || task.IssueStatus == query.StatusFilter)
-                       group task by new { IssueTypeName = issueType.PName, StatusName = status.PName } into g
-                       select new
-                       {
-                           g.Key.IssueTypeName,
-                           g.Key.StatusName,
-                           Count = g.Count()
-                       };
+        var query = _context.JiraIssues.AsNoTracking();
 
-        var results = await rawQuery.ToListAsync();
+        if (!string.IsNullOrWhiteSpace(issueType))
+            query = query.Where(t => t.IssueTypeObj.PName == issueType); 
 
-        var grouped = results
-            .GroupBy(x => x.IssueTypeName)
-            .Select(g => new IssueTypeProgressDto
+        if (unAssigned)
+            query = query.Where(t => t.AppUser != null && t.AppUser.User != null);
+
+        query = query
+            .Include(t => t.IssueTypeObj)
+            .Include(t => t.IssueStatusObj)
+            .Include(t => t.AppUser).ThenInclude(a => a.User);
+
+        var raw = await query
+            .Select(t => new
             {
-                IssueTypeName = g.Key,
-                Statuses = g.Select(x => new StatusCountDto
+                IssueTypeName = t.IssueTypeObj.PName,
+                StatusName    = t.IssueStatusObj.PName
+            })
+            .GroupBy(x => new { x.IssueTypeName, x.StatusName })
+            .Select(g => new
+            {
+                g.Key.IssueTypeName,
+                g.Key.StatusName,
+                Count = g.Count()
+            })
+            .ToListAsync();
+
+        var result = raw
+            .GroupBy(x => x.IssueTypeName)
+            .Select(g =>
+            {
+                int total = g.Sum(x => x.Count);
+                return new IssueTypeProgressDto
                 {
-                    StatusName = x.StatusName,
-                    Count = x.Count
-                }).ToList()
+                    IssueTypeName = g.Key,
+                    Statuses = g.Select(x => new StatusCountDto
+                    {
+                        StatusName = x.StatusName,
+                        Count = x.Count,
+                        Percentage = total > 0 ? Math.Round((double)x.Count / total * 100, 1) : 0
+                    }).ToList()
+                };
             })
             .ToList();
 
-        return grouped;
+        return result;
     }}
+
 

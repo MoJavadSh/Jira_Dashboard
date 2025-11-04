@@ -21,9 +21,9 @@ public class JiraController : ControllerBase
         /// Chart : Issue Types of each Assignee, count
         /// </summary>
         [HttpGet("UserBarChart")]
-        public async Task<ActionResult<ResponseDto>> GetUserBarChart([FromQuery] bool unAssign)
+        public async Task<ActionResult<ResponseDto>> GetUserBarChart([FromQuery] bool unAssigned = true)
         {
-            var result = await _repo.GetUserBatChartAsync(unAssign);
+            var result = await _repo.GetUserBatChartAsync(unAssigned);
             var response = GenerateResponse(HttpStatusCode.OK,"", result, result.Count);
             return Ok(response);
 
@@ -33,9 +33,9 @@ public class JiraController : ControllerBase
         /// Chart : Issue Count of each Assignee
         /// </summary>
         [HttpGet("UserIssueCount")]
-        public async Task<ActionResult<List<UserIssueCountDto>>> GetUserIssueCountChart([FromQuery] QueryObject query)
+        public async Task<ActionResult<List<UserIssueCountDto>>> GetUserIssueCountChart([FromQuery] bool unAssigned = true)
         {
-            var result = await _repo.GetUserIssueCountAsync(query);
+            var result = await _repo.GetUserIssueCountAsync(unAssigned);
             var response = GenerateResponse(HttpStatusCode.OK, "", result, result.Count);
             return Ok(response);
         }
@@ -44,9 +44,9 @@ public class JiraController : ControllerBase
         /// Chart : count of each IssueType
         /// </summary>
         [HttpGet("IssueTypeCount")]
-        public async Task<ActionResult<List<IssueTypeCountDto>>> GetIssueTypeCount([FromQuery] QueryObject query)
+        public async Task<ActionResult<List<IssueTypeCountDto>>> GetIssueTypeCount([FromQuery] bool unAssigned = true)
         {
-            var result = await _repo.GetIssueTypeCountAsync(query);
+            var result = await _repo.GetIssueTypeCountAsync(unAssigned);
             var response = GenerateResponse(HttpStatusCode.OK, "", result, result.Count);
             return Ok(response);
         }
@@ -55,9 +55,9 @@ public class JiraController : ControllerBase
         /// Chart : Progress. Of each issue type
         /// </summary>
         [HttpGet("IssueTypeProgress")]
-        public async Task<ActionResult<List<IssueTypeProgressDto>>> GetIssueTypeProgressChart([FromQuery] QueryObject query)
+        public async Task<ActionResult<List<IssueTypeProgressDto>>> GetIssueTypeProgressChart([FromQuery] string? issueType, bool unAssigned = true)
         {
-            var result = await _repo.GetIssueTypeProgressAsync(query);
+            var result = await _repo.GetIssueTypeProgressAsync(issueType, unAssigned);
             var response = GenerateResponse(HttpStatusCode.OK, "", result, result.Count);
             return Ok(response);
         }

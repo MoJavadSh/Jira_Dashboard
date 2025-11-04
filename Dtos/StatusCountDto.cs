@@ -4,4 +4,5 @@ public class StatusCountDto
 {
     public string StatusName { get; set; }
     public int Count { get; set; } 
+    public double Percentage { get; set; } 
 }

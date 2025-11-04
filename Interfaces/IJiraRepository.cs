@@ -5,8 +5,8 @@ namespace JiraDashboard;
 
 public interface IJiraRepository
 {
-    Task<List<UserBarChartDto>> GetUserBatChartAsync();
-    Task<List<UserIssueCountDto>> GetUserIssueCountAsync(QueryObject query);
-    Task<List<IssueTypeCountDto>> GetIssueTypeCountAsync(QueryObject query);
-    Task<List<IssueTypeProgressDto>> GetIssueTypeProgressAsync(QueryObject query);
+    Task<List<UserBarChartDto>> GetUserBatChartAsync(bool unAssigned);
+    Task<List<UserIssueCountDto>> GetUserIssueCountAsync(bool unAssigned);
+    Task<List<IssueTypeCountDto>> GetIssueTypeCountAsync(bool unAssigned);
+    Task<List<IssueTypeProgressDto>> GetIssueTypeProgressAsync(string issueType, bool unAssigned);
 }
