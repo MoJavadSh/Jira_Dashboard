@@ -175,21 +175,19 @@ public class JiraRepository : IJiraRepository
     public async Task<OpenClosedDto> GetOpenClosedAsync()
     {
         var issues = await _context.JiraIssues.AsNoTracking()
-            .Include(t => t.IssueStatusObj)  // فقط برای PName
+            .Include(t => t.IssueStatusObj)  
             .Select(t => new
             {
-                t.Assignee,                    // UserKey
+                t.Assignee,                    
                 StatusName = t.IssueStatusObj.PName
             })
             .ToListAsync();
 
-        // وضعیت‌های بسته‌شده
         var closedStatusNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "Done", "Resolved", "Resolve"
         };
 
-        // تقسیم‌بندی
         var assignedIssues = issues.Where(t => !string.IsNullOrWhiteSpace(t.Assignee)).ToList();
         var unassignedCount = issues.Count - assignedIssues.Count;
 
