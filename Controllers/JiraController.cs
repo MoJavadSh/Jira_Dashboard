@@ -65,7 +65,7 @@ public class JiraController : ControllerBase
         /// <summary>
         /// Header : Overview of all issues (Overview Tab)
         /// </summary>
-        [HttpGet("OpenClosed")]
+        [HttpGet("StatusSummary")]
         public async Task<ActionResult<List<OpenClosedDto>>> GetOpenClosedAsync()
         {
             var result = await _repo.GetOpenClosedAsync();
