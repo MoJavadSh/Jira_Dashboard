@@ -41,20 +41,23 @@ public class JiraRepository : IJiraRepository
 
         var result = await s.ToListAsync();
         
-        var group = result
-            .GroupBy(x => x.AssigneeName)
-            .Select(g => new UserBarChartDto
+        var allUsers = result.Select(x => x.AssigneeName).Distinct().ToList();
+        var allIssueTypes = result.Select(x => x.IssueTypeName).Distinct().ToList();
+        var completeResult = allUsers.Select(user => new UserBarChartDto
             {
-                AssigneeName = g.Key,
-                IssueTypes = g.Select(x => new IssueTypeCountDto
+                AssigneeName = user,
+                IssueTypes = allIssueTypes.Select(x => new IssueTypeCountDto
                 {
-                    IssueTypeName = x.IssueTypeName,
-                    Count = x.count,
-                    Percentage = null
+                    IssueTypeName = x,
+                    Count = result
+                        .Where(r => r.AssigneeName == user && r.IssueTypeName == x)
+                        .Select(r => r.count)
+                        .FirstOrDefault(), 
+                    Percentage = null                
                 }).ToList()
             })
             .ToList();
-        return group;
+        return completeResult;
     }
 
     public async Task<List<UserIssueCountDto>> GetUserIssueCountAsync(bool unAssigned)
