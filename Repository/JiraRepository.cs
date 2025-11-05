@@ -16,7 +16,7 @@ public class JiraRepository : IJiraRepository
         _context = context;
     }
 
-    public async Task<List<UserBarChartDto>> GetUserBatChartAsync(bool unAssigned)
+    public async Task<List<UserBarChartDto>> GetUserBarChartAsync(bool unAssigned)
     {
         var s = _context.JiraIssues.AsNoTracking()
             .Include(task => task.AppUser)
@@ -170,6 +170,42 @@ public class JiraRepository : IJiraRepository
             .ToList();
 
         return result;
-    }}
+    }
+
+    public async Task<OpenClosedDto> GetOpenClosedAsync()
+    {
+        var issues = await _context.JiraIssues.AsNoTracking()
+            .Include(t => t.IssueStatusObj)  // فقط برای PName
+            .Select(t => new
+            {
+                t.Assignee,                    // UserKey
+                StatusName = t.IssueStatusObj.PName
+            })
+            .ToListAsync();
+
+        // وضعیت‌های بسته‌شده
+        var closedStatusNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "Done", "Resolved", "Resolve"
+        };
+
+        // تقسیم‌بندی
+        var assignedIssues = issues.Where(t => !string.IsNullOrWhiteSpace(t.Assignee)).ToList();
+        var unassignedCount = issues.Count - assignedIssues.Count;
+
+        var openCount = assignedIssues
+            .Count(t => !closedStatusNames.Contains(t.StatusName));
+
+        var closedCount = assignedIssues
+            .Count(t => closedStatusNames.Contains(t.StatusName));
+
+        return new OpenClosedDto
+        {
+            Open = openCount,
+            Closed = closedCount,
+            Unassigned = unassignedCount
+        };
+    }
+}
 
 

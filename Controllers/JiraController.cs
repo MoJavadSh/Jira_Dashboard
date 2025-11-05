@@ -23,7 +23,7 @@ public class JiraController : ControllerBase
         [HttpGet("UserBarChart")]
         public async Task<ActionResult<ResponseDto>> GetUserBarChart([FromQuery] bool unAssigned = true)
         {
-            var result = await _repo.GetUserBatChartAsync(unAssigned);
+            var result = await _repo.GetUserBarChartAsync(unAssigned);
             var response = GenerateResponse(HttpStatusCode.OK,"", result, result.Count);
             return Ok(response);
 
@@ -59,6 +59,17 @@ public class JiraController : ControllerBase
         {
             var result = await _repo.GetIssueTypeProgressAsync(issueType, unAssigned);
             var response = GenerateResponse(HttpStatusCode.OK, "", result, result.Count);
+            return Ok(response);
+        }
+        
+        /// <summary>
+        /// Header : Overview of all issues (Overview Tab)
+        /// </summary>
+        [HttpGet("OpenClosed")]
+        public async Task<ActionResult<List<OpenClosedDto>>> GetOpenClosedAsync()
+        {
+            var result = await _repo.GetOpenClosedAsync();
+            var response = GenerateResponse(HttpStatusCode.OK, "", result, 1);
             return Ok(response);
         }
         
