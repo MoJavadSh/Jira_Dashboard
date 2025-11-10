@@ -33,6 +33,7 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(xmlPath);
 });
 builder.Services.AddScoped<IJiraRepository, JiraRepository>();
+builder.Services.AddScoped<IBugRepository, BugRepository>();
 
 var app = builder.Build();
 

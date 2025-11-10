@@ -14,6 +14,8 @@ public class AppDbContext : DbContext
     public DbSet<IssueType> IssueTypes { get; set; }
     public DbSet<IssueStatus> IssueStatuses { get; set; }
     public DbSet<AppUser> AppUsers { get; set; }
+    public DbSet<ChangeGroup> ChangeGroups { get; set; }
+    public DbSet<ChangeItem> ChangeItems { get; set; }
     
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -29,12 +31,13 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Assignee).HasColumnName("assignee").HasColumnType("varchar(255)"); 
             entity.Property(e => e.IssueType).HasColumnName("issuetype").HasColumnType("varchar(255)"); // property IssueType has column named issuetyoe in db
             entity.Property(e => e.IssueStatus).HasColumnName("issuestatus").HasColumnType("varchar(255)");
+            entity.Property(e => e.Created).HasColumnName("created").HasColumnType("timestamp without time zone");
             
-            // روابط
+            // Relations
             entity.HasOne(j => j.AppUser)
                 .WithMany()
-                .HasPrincipalKey(u => u.UserKey) // کلید اصلی در AppUser
-                .HasForeignKey(j => j.Assignee) // کلید خارجی در JiraIssue
+                .HasPrincipalKey(u => u.UserKey) // PK in AppUser
+                .HasForeignKey(j => j.Assignee) // FK in JiraIssue
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -92,6 +95,37 @@ public class AppDbContext : DbContext
                 .HasPrincipalKey(u => u.UserName)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.NoAction);
+        });
+        
+        modelBuilder.Entity<ChangeGroup>(entity =>
+        {
+            entity.ToTable("changegroup", "public");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.IssueId).HasColumnName("issueid");
+            entity.Property(e => e.Created).HasColumnName("created");
+
+            entity.HasOne(e => e.JiraIssue)
+                .WithMany()
+                .HasForeignKey(e => e.IssueId)
+                .HasPrincipalKey(j => j.Id);
+        });
+
+        modelBuilder.Entity<ChangeItem>(entity =>
+        {
+            entity.ToTable("changeitem", "public");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.GroupId).HasColumnName("groupid");
+            entity.Property(e => e.Field).HasColumnName("field");
+            entity.Property(e => e.OldValue).HasColumnName("oldvalue");
+            entity.Property(e => e.NewValue).HasColumnName("newvalue");
+            entity.Property(e => e.OldString).HasColumnName("oldstring");
+            entity.Property(e => e.NewString).HasColumnName("newstring");
+
+            entity.HasOne(e => e.ChangeGroup)
+                .WithMany()
+                .HasForeignKey(e => e.GroupId);
         });
     }
 }
