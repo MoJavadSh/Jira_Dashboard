@@ -22,7 +22,7 @@ public class BugController : ControllerBase
     public async Task<ActionResult<ResponseDto>> GetBugDailyTrendAsync([FromQuery] bool unAssigned = true)
     {
         var result = await _repo.GetBugDailyTrendAsync();
-        var response = GenerateResponse(HttpStatusCode.OK,"", result, result.Count);
+        var response = GenerateResponse(HttpStatusCode.OK,"", "Test title", "Test description",result, result.Count);
         return Ok(response);
 
     }
@@ -34,18 +34,25 @@ public class BugController : ControllerBase
     public async Task<ActionResult<ResponseDto>> GetBugStatus()
     {
         var result = await _repo.GetBugStatus();
-        var response = GenerateResponse(HttpStatusCode.OK,"", result, 1);
+        var response = GenerateResponse(HttpStatusCode.OK,"","Test title", "Test description", result, 1);
         return Ok(response);
 
     }
     
-    private static ResponseDto GenerateResponse(HttpStatusCode statusCode, string message, object? result = null,
-        int total = 0, int page = 1, int perPage = 10)
+    private static ResponseDto GenerateResponse(
+        HttpStatusCode statusCode,
+        string message,
+        string title = "",
+        string description = "",
+        object? data = default,
+        int total = 0,
+        int page = 1,
+        int perPage = 10)
         => new()
         {
             StatusCode = (int)statusCode,
-            Message = new List<string>() { message },
-            Result = result,
+            Message = new List<string> { message },
+            Result = new ResultDto { Title = title, Description = description, Data = data },
             Total = total,
             Page = page,
             PerPage = perPage
