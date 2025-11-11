@@ -1,4 +1,5 @@
 using System.Net;
+using JiraDashboard.Constants;
 using JiraDashboard.Dtos;
 using JiraDashboard.Helpers;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +25,7 @@ public class JiraController : ControllerBase
     public async Task<ActionResult<ResponseDto>> GetUserBarChart([FromQuery] bool unAssigned = true)
     {
         var result = await _repo.GetUserBarChartAsync(unAssigned);
-        var response = GenerateResponse(HttpStatusCode.OK, "","Test title", "Test description", result, result.Count);
+        var response = GenerateResponse(HttpStatusCode.OK, "",JiraText.UserBarChart.Title, JiraText.UserBarChart.Description, result, result.Count);
         return Ok(response);
 
     }
@@ -36,7 +37,7 @@ public class JiraController : ControllerBase
     public async Task<ActionResult<List<UserIssueCountDto>>> GetUserIssueCountChart([FromQuery] bool unAssigned = true)
     {
         var result = await _repo.GetUserIssueCountAsync(unAssigned);
-        var response = GenerateResponse(HttpStatusCode.OK, "","Test title", "Test description", result, result.Count);
+        var response = GenerateResponse(HttpStatusCode.OK, "",JiraText.UserIssueCount.Title, JiraText.UserIssueCount.Description, result, result.Count);
         return Ok(response);
     }
 
@@ -47,7 +48,7 @@ public class JiraController : ControllerBase
     public async Task<ActionResult<List<IssueTypeCountDto>>> GetIssueTypeCount([FromQuery] bool unAssigned = true)
     {
         var result = await _repo.GetIssueTypeCountAsync(unAssigned);
-        var response = GenerateResponse(HttpStatusCode.OK, "","Test title", "Test description", result, result.Count);
+        var response = GenerateResponse(HttpStatusCode.OK, "",JiraText.IssueTypeCount.Title, JiraText.IssueTypeCount.Description, result, result.Count);
         return Ok(response);
     }
 
@@ -59,7 +60,7 @@ public class JiraController : ControllerBase
         bool unAssigned = true)
     {
         var result = await _repo.GetIssueTypeProgressAsync(issueType, unAssigned);
-        var response = GenerateResponse(HttpStatusCode.OK, "","Test title", "Test description", result, result.Count);
+        var response = GenerateResponse(HttpStatusCode.OK, "",JiraText.IssueTypeProgress.Title, JiraText.IssueTypeProgress.Description, result, result.Count);
         return Ok(response);
     }
 
@@ -70,7 +71,7 @@ public class JiraController : ControllerBase
     public async Task<ActionResult<List<OpenClosedDto>>> GetOpenClosedAsync()
     {
         var result = await _repo.GetOpenClosedAsync();
-        var response = GenerateResponse(HttpStatusCode.OK, "", "Test title", "Test description", result, 1);
+        var response = GenerateResponse(HttpStatusCode.OK, "", JiraText.StatusSummary.Title, JiraText.StatusSummary.Description, result, 1);
         return Ok(response);
     }
 

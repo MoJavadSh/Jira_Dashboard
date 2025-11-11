@@ -1,4 +1,5 @@
 using System.Net;
+using JiraDashboard.Constants;
 using JiraDashboard.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,7 +23,7 @@ public class BugController : ControllerBase
     public async Task<ActionResult<ResponseDto>> GetBugDailyTrendAsync([FromQuery] bool unAssigned = true)
     {
         var result = await _repo.GetBugDailyTrendAsync();
-        var response = GenerateResponse(HttpStatusCode.OK,"", "Test title", "Test description",result, result.Count);
+        var response = GenerateResponse(HttpStatusCode.OK,"", BugText.BugDaily.Title, BugText.BugDaily.Description,result, result.Count);
         return Ok(response);
 
     }
@@ -34,7 +35,7 @@ public class BugController : ControllerBase
     public async Task<ActionResult<ResponseDto>> GetBugStatus()
     {
         var result = await _repo.GetBugStatus();
-        var response = GenerateResponse(HttpStatusCode.OK,"","Test title", "Test description", result, 1);
+        var response = GenerateResponse(HttpStatusCode.OK,"",BugText.BugStatus.Title, BugText.BugStatus.Title, result, 1);
         return Ok(response);
 
     }
