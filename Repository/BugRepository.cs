@@ -19,6 +19,7 @@ public class BugRepository : IBugRepository
 
         var bugs = await _context.JiraIssues.AsNoTracking()
             .Where(t => t.IssueTypeObj.PName == "bug")
+            .Where(task => task.IssueTypeObj.PName != "Story")
             .Select(t => new
             {
                 t.Id,
