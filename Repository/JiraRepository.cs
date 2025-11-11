@@ -18,10 +18,16 @@ public class JiraRepository : IJiraRepository
 
     public async Task<List<UserBarChartDto>> GetUserBarChartAsync(bool unAssigned)
     {
-        var s = _context.JiraIssues.AsNoTracking()
+        var query = _context.JiraIssues.AsNoTracking()
             .Include(task => task.AppUser)
             .ThenInclude(appUser => appUser.User)
             .Include(task => task.IssueTypeObj)
+            .Where(t => t.IssueTypeObj.PName != "Story");
+        
+        if (unAssigned)
+            query = query.Where(x => x.AppUser != null && x.AppUser.User != null);
+                
+        var s = query
             .Select(task => new
             {
                 AssigneeName = task.AppUser != null && task.AppUser.User != null
@@ -29,7 +35,6 @@ public class JiraRepository : IJiraRepository
                     : "Un Assigned",
                 IssueTypeName = task.IssueTypeObj.PName
             })
-            .Where(x=>unAssigned == true ? x.AssigneeName != "Un Assigned":true)
             .GroupBy(x => new { x.AssigneeName, x.IssueTypeName })
             .Select(g => new
             {
@@ -62,7 +67,8 @@ public class JiraRepository : IJiraRepository
 
     public async Task<List<UserIssueCountDto>> GetUserIssueCountAsync(bool unAssigned)
     {
-        var tasks = _context.JiraIssues.AsNoTracking();
+        var tasks = _context.JiraIssues.AsNoTracking()
+            .Where(task => task.IssueTypeObj.PName != "Story");
         
         if (unAssigned)
             tasks = tasks.Where(t => t.AppUser != null && t.AppUser.User != null);
@@ -93,7 +99,8 @@ public class JiraRepository : IJiraRepository
 
     public async Task<List<IssueTypeCountDto>> GetIssueTypeCountAsync(bool unAssigned)
     {
-        var tasks = _context.JiraIssues.AsNoTracking();
+        var tasks = _context.JiraIssues.AsNoTracking()
+            .Where(task => task.IssueTypeObj.PName != "Story");
         
         if (unAssigned) 
             tasks = tasks.Where(t => t.AppUser != null && t.AppUser.User != null);
@@ -126,7 +133,9 @@ public class JiraRepository : IJiraRepository
 
     public async Task<List<IssueTypeProgressDto>> GetIssueTypeProgressAsync(string issueType, bool unAssigned)
     {
-        var query = _context.JiraIssues.AsNoTracking();
+        var query = _context.JiraIssues.AsNoTracking()
+            .Where(task => task.IssueTypeObj.PName != "Story");
+
 
         if (!string.IsNullOrWhiteSpace(issueType))
             query = query.Where(t => t.IssueTypeObj.PName == issueType); 
@@ -178,7 +187,8 @@ public class JiraRepository : IJiraRepository
     public async Task<OpenClosedDto> GetOpenClosedAsync()
     {
         var issues = await _context.JiraIssues.AsNoTracking()
-            .Include(t => t.IssueStatusObj)  
+            .Include(t => t.IssueStatusObj)
+            .Where(task => task.IssueTypeObj.PName != "Story")
             .Select(t => new
             {
                 t.Assignee,                    
