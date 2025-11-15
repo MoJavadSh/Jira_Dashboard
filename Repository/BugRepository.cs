@@ -135,6 +135,7 @@ public class BugRepository : IBugRepository
 
     public async Task<List<BugRejectCycleDto>> GetRejectedBugCycleAsync(bool? unassigned = null, int top = 10)
     {
+        
 var bugTypeIds = await _context.IssueTypes
         .AsNoTracking()
         .Where(t => t.PName.ToLower().Contains("bug"))
