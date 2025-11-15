@@ -218,4 +218,100 @@ public class BugRepository : IBugRepository
 
     return result;
     }
+
+    public async Task<BugTablePagedResult<BugTableDto>> GetAllBugsTableAsync(string? statusFilter, string sortBy, bool sortDescending, int page, int pageSize)
+    {
+     var query = _context.JiraIssues
+        .AsNoTracking()
+        .Include(j => j.IssueStatusObj)
+        .Include(j => j.IssueTypeObj)
+        .Include(j => j.AppUser).ThenInclude(u => u.User)  // برای Assignee
+        .Where(j => j.IssueTypeObj.PName.ToLower().Contains("bug"))
+        .Where(j => j.ProjectId != null && j.IssueNum != null);
+
+    // فیلتر استاتوس
+    if (!string.IsNullOrWhiteSpace(statusFilter))
+        query = query.Where(j => j.IssueStatusObj.PName == statusFilter);
+
+    // سورت
+    query = sortBy.ToLower() switch
+    {
+        "created" => sortDescending ? query.OrderByDescending(j => j.Created)
+                                   : query.OrderBy(j => j.Created),
+        _ => sortDescending ? query.OrderByDescending(j => j.IssueNum)
+                           : query.OrderBy(j => j.IssueNum)
+    };
+
+    var total = await query.CountAsync();
+
+    var items = await query
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .Select(j => new
+        {
+            j.Id,
+            j.ProjectId,
+            j.IssueNum,
+            j.Summary,
+            j.Creator,      // string
+            j.Assignee,     // string
+            j.Created,
+            StatusName = j.IssueStatusObj.PName,
+            AssigneeName = j.AppUser != null && j.AppUser.User != null
+                ? j.AppUser.User.DisplayName
+                : "Unassigned"
+        })
+        .ToListAsync();
+
+    if (!items.Any())
+        return new BugTablePagedResult<BugTableDto> { Items = new(), TotalCount = total };
+
+    // Project Key
+    var projectIds = items.Select(x => x.ProjectId!.Value).Distinct().ToList();
+    var projectKeyDict = await _context.ProjectKeys
+        .AsNoTracking()
+        .Where(pk => projectIds.Contains(pk.ProjectId))
+        .ToDictionaryAsync(pk => pk.ProjectId, pk => pk.ProjectKeyName);
+
+    // Reporter (Creator) نام واقعی
+    var creatorKeys = items.Where(x => !string.IsNullOrEmpty(x.Creator)).Select(x => x.Creator!).Distinct().ToList();
+    var creatorNames = await _context.AppUsers
+        .AsNoTracking()
+        .Where(u => creatorKeys.Contains(u.UserKey))
+        .Select(u => new { u.UserKey, DisplayName = u.User != null ? u.User.DisplayName : u.UserKey })
+        .ToDictionaryAsync(x => x.UserKey, x => x.DisplayName);
+
+    // Labels
+    var issueIds = items.Select(x => x.Id).ToList();
+    var labelsDict = await _context.Labels
+        .AsNoTracking()
+        .Where(l => issueIds.Contains(l.IssueId))
+        .GroupBy(l => l.IssueId)
+        .Select(g => new
+        {
+            IssueId = g.Key,
+            Labels = string.Join(", ", g.Select(l => l.LabelName).OrderBy(l => l))
+        })
+        .ToDictionaryAsync(x => x.IssueId, x => x.Labels ?? "-");
+
+    var result = items.Select(x => new BugTableDto
+    {
+        Key = $"{projectKeyDict.GetValueOrDefault(x.ProjectId!.Value, "UNKNOWN")}-{x.IssueNum}",
+        Summary = x.Summary ?? "(بدون خلاصه)",
+        Status = x.StatusName,
+        Reporter = creatorNames.GetValueOrDefault(x.Creator, "Unknown"),
+        Assignee = x.AssigneeName,
+        Labels = labelsDict.GetValueOrDefault(x.Id, "-"),
+        Created = x.Created,
+        Age = DateTime.Now - x.Created
+    }).ToList();
+
+    return new BugTablePagedResult<BugTableDto>
+    {
+        Items = result,
+        TotalCount = total,
+        Page = page,
+        PageSize = pageSize
+    };
+    }
 }

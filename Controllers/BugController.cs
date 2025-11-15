@@ -44,13 +44,23 @@ public class BugController : ControllerBase
     /// Chart(horizontal Bar) : Cycle of rejected Bugs (Hover datas : "summary , Assignee")
     /// </summary>
     [HttpGet("BugRejectCycle")]
-    public async Task<ActionResult<ResponseDto>> GetBugRejectCycle([FromQuery] bool unAssigned = true, int top = 10)
+    public async Task<ActionResult<ResponseDto>> GetBugRejectCycleAsync([FromQuery] bool unAssigned = true, int top = 10)
     {
         var result = await _repo.GetRejectedBugCycleAsync(unAssigned,top);
         var response = GenerateResponse(HttpStatusCode.OK,"",BugText.BugRejectCycle.Title, BugText.BugRejectCycle.Title, result, result.Count);
         return Ok(response);
     }
     
+    /// <summary>
+    /// Table : Table Of All Bugs (Key,Summary,status,reporter,Assignee,labels,created,age)
+    /// </summary>
+    [HttpGet("BugTable")]
+    public async Task<ActionResult<ResponseDto>> GetBugTableAsync([FromQuery] string? statusFilter = null, string sortBy = "Key", bool sortDescending = true, int page = 1, int pageSize = 15)
+    {
+        var result = await _repo.GetAllBugsTableAsync(statusFilter , sortBy , sortDescending, page , pageSize);
+        var response = GenerateResponse(HttpStatusCode.OK,"","Null", "Null", result, 1);
+        return Ok(response);
+    }
     
     private static ResponseDto GenerateResponse(
         HttpStatusCode statusCode,
