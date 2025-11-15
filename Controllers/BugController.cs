@@ -35,10 +35,22 @@ public class BugController : ControllerBase
     public async Task<ActionResult<ResponseDto>> GetBugStatus()
     {
         var result = await _repo.GetBugStatus();
-        var response = GenerateResponse(HttpStatusCode.OK,"",BugText.BugStatus.Title, BugText.BugStatus.Title, result, 1);
+        var response = GenerateResponse(HttpStatusCode.OK,"",BugText.BugStatus.Title, BugText.BugStatus.Description, result, 1);
         return Ok(response);
 
     }
+    
+    /// <summary>
+    /// Chart(Bar) : Cycle of rejected Bugs (Hover datas : "summary & Assignee")
+    /// </summary>
+    [HttpGet("BugRejectCycle")]
+    public async Task<ActionResult<ResponseDto>> GetBugRejectCycle([FromQuery] bool unAssigned, int top)
+    {
+        var result = await _repo.GetRejectedBugCycleAsync(unAssigned,top);
+        var response = GenerateResponse(HttpStatusCode.OK,"",BugText.BugRejectCycle.Title, BugText.BugRejectCycle.Title, result, result.Count);
+        return Ok(response);
+    }
+    
     
     private static ResponseDto GenerateResponse(
         HttpStatusCode statusCode,
@@ -58,4 +70,6 @@ public class BugController : ControllerBase
             Page = page,
             PerPage = perPage
         };
+
+    
 }

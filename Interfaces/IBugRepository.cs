@@ -6,4 +6,5 @@ public interface IBugRepository
 {
     Task<List<BugDailyTrendDto>> GetBugDailyTrendAsync();
     Task<BugKpiDto> GetBugStatus();
+    Task<List<BugRejectCycleDto>> GetRejectedBugCycleAsync(bool? unassigned = null, int top = 10);
 }

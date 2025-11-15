@@ -130,4 +130,105 @@ public class BugRepository : IBugRepository
         ClosedBugs = currentlyClosed, 
         AvgTimeToCloseInDays = Math.Round(avgCycleTime, 2), 
     };
-}}
+    
+}
+
+    public async Task<List<BugRejectCycleDto>> GetRejectedBugCycleAsync(bool? unassigned = null, int top = 10)
+    {
+var bugTypeIds = await _context.IssueTypes
+        .AsNoTracking()
+        .Where(t => t.PName.ToLower().Contains("bug"))
+        .Select(t => t.Id)
+        .ToListAsync();
+
+    if (!bugTypeIds.Any())
+        return new List<BugRejectCycleDto>();
+
+    var bugsQuery = _context.JiraIssues
+        .AsNoTracking()
+        .Where(j => bugTypeIds.Contains(j.IssueType))
+        .Where(j => j.ProjectId != null && j.IssueNum != null)
+        .Select(j => new
+        {
+            j.Id,
+            j.ProjectId,
+            j.IssueNum,
+            j.Summary,
+            j.Assignee
+        });
+
+    if (unassigned == true)
+        bugsQuery = bugsQuery.Where(j => string.IsNullOrEmpty(j.Assignee));
+    else if (unassigned == false)
+        bugsQuery = bugsQuery.Where(j => !string.IsNullOrEmpty(j.Assignee));
+
+    var rawBugs = await bugsQuery.Take(500).ToListAsync(); // حداکثر 500 تا برای عملکرد خوب
+
+    if (!rawBugs.Any())
+        return new List<BugRejectCycleDto>();
+
+    var bugIds = rawBugs.Select(b => b.Id).ToList();
+
+    var rejectedCounts = await _context.ChangeItems
+        .AsNoTracking()
+        .Include(ci => ci.ChangeGroup)
+        .Where(ci => ci.Field == "status" 
+                  && ci.NewString == "Rejected"
+                  && bugIds.Contains(ci.ChangeGroup.IssueId))
+        .GroupBy(ci => ci.ChangeGroup.IssueId)
+        .Select(g => new
+        {
+            IssueId = g.Key,
+            ReopenCount = g.Count()
+        })
+        .ToListAsync();
+
+    var rejectedDict = rejectedCounts.ToDictionary(x => x.IssueId, x => x.ReopenCount);
+
+    var projectIds = rawBugs.Select(b => b.ProjectId!.Value).Distinct().ToList();
+    var projectKeyDict = await _context.ProjectKeys
+        .AsNoTracking()
+        .Where(pk => projectIds.Contains(pk.ProjectId))
+        .ToDictionaryAsync(pk => pk.ProjectId, pk => pk.ProjectKeyName);
+
+    var assigneeKeys = rawBugs
+        .Where(b => !string.IsNullOrEmpty(b.Assignee))
+        .Select(b => b.Assignee!)
+        .Distinct()
+        .ToList();
+
+    var assigneeNames = await _context.AppUsers
+        .AsNoTracking()
+        .Where(u => assigneeKeys.Contains(u.UserKey))
+        .ToDictionaryAsync(
+            u => u.UserKey,
+            u => u.User?.DisplayName ?? u.UserKey
+        );
+
+    var result = rawBugs
+        .Select(b =>
+        {
+            var reopenCount = rejectedDict.GetValueOrDefault(b.Id, 0);
+            var projectKey = projectKeyDict.GetValueOrDefault(b.ProjectId!.Value, "UNKNOWN");
+            var issueKey = $"{projectKey}-{b.IssueNum}";
+
+            return new BugRejectCycleDto
+            {
+                IssueKey = issueKey,
+                ReopenCount = reopenCount,
+                Summary = string.IsNullOrEmpty(b.Summary) ? "(بدون خلاصه)" : b.Summary,
+                Assignee = string.IsNullOrEmpty(b.Assignee)
+                    ? "Unassigned"
+                    : assigneeNames.GetValueOrDefault(b.Assignee, "Unknown"),
+                Url = $"https://your-jira-domain.com/browse/{issueKey}"
+            };
+        })
+        .Where(x => x.ReopenCount > 0) // فقط اونایی که حداقل 1 بار Rejected شدن
+        .OrderByDescending(x => x.ReopenCount)
+        .ThenByDescending(x => x.IssueKey)
+        .Take(top)
+        .ToList();
+
+    return result;
+    }
+}
