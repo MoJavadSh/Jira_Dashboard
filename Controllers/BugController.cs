@@ -44,7 +44,7 @@ public class BugController : ControllerBase
     /// Chart(Bar) : Cycle of rejected Bugs (Hover datas : "summary & Assignee")
     /// </summary>
     [HttpGet("BugRejectCycle")]
-    public async Task<ActionResult<ResponseDto>> GetBugRejectCycle([FromQuery] bool unAssigned, int top)
+    public async Task<ActionResult<ResponseDto>> GetBugRejectCycle([FromQuery] bool unAssigned = true, int top = 10)
     {
         var result = await _repo.GetRejectedBugCycleAsync(unAssigned,top);
         var response = GenerateResponse(HttpStatusCode.OK,"",BugText.BugRejectCycle.Title, BugText.BugRejectCycle.Title, result, result.Count);
