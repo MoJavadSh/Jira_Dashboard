@@ -12,6 +12,7 @@ public class JiraIssue
     public string Summary { get; set; }
     public long? ProjectId { get; set; }
     public long IssueNum {get; set;}
+    public string Creator { get; set; } 
     
     public AppUser AppUser { get; set; } // AppUser (L Join)
     public IssueType IssueTypeObj { get; set; } //  IssueType (In Join)

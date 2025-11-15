@@ -18,6 +18,7 @@ public class AppDbContext : DbContext
     public DbSet<ChangeItem> ChangeItems { get; set; }
     public DbSet<Project> Projects {get; set;}
     public DbSet<ProjectKey> ProjectKeys { get; set; }
+    public DbSet<Label> Labels { get; set; }
     
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -37,6 +38,7 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Summary).HasColumnName("summary").HasColumnType("varchar(255)");
             entity.Property(e => e.ProjectId).HasColumnName("project").HasColumnType("numeric(18)");
             entity.Property(e => e.IssueNum).HasColumnName("issuenum").HasColumnType("numeric(18)");
+            entity.Property(e => e.Creator).HasColumnName("creator");
             
             // Relations
             entity.HasOne(j => j.AppUser)
@@ -153,6 +155,15 @@ public class AppDbContext : DbContext
                 .HasForeignKey(e => e.ProjectId)
                 .HasPrincipalKey(p => p.Id)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+        
+        modelBuilder.Entity<Label>(entity =>
+        {
+            entity.ToTable("label", "public");
+            entity.Property(e => e.Id).HasColumnName("id").HasColumnType("numeric(18)");
+            entity.Property(e => e.LabelName).HasColumnName("label").HasColumnType("varchar(255)");
+            entity.Property(e => e.IssueId).HasColumnName("issue").HasColumnType("numeric(18)");
+            entity.Property(e => e.FieldId).HasColumnName("fieldid").HasColumnType("numeric(18)");
         });
     }
 }
