@@ -41,7 +41,7 @@ public class BugController : ControllerBase
     }
     
     /// <summary>
-    /// Chart(Bar) : Cycle of rejected Bugs (Hover datas : "summary & Assignee")
+    /// Chart(horizontal Bar) : Cycle of rejected Bugs (Hover datas : "summary , Assignee")
     /// </summary>
     [HttpGet("BugRejectCycle")]
     public async Task<ActionResult<ResponseDto>> GetBugRejectCycle([FromQuery] bool unAssigned = true, int top = 10)
