@@ -132,102 +132,90 @@ public class BugRepository : IBugRepository
         };
     }
 
-    public async Task<List<BugRejectCycleDto>> GetRejectedBugCycleAsync(bool unassigned , int top = 10)
+    public async Task<List<BugRejectCycleDto>> GetRejectedBugCycleAsync(bool unassigned , int top)
     {
-        var bugTypeIds = await _context.IssueTypes
-            .AsNoTracking()
-            .Where(t => t.PName.ToLower().Contains("bug"))
-            .Select(t => t.Id)
-            .ToListAsync();
+    var query = _context.JiraIssues
+        .AsNoTracking()
+        .Where(j => j.IssueTypeObj.PName.ToLower().Contains("bug"))
+        .Where(j => j.ProjectId != null && j.IssueNum != null);
 
-        if (!bugTypeIds.Any())
-            return new List<BugRejectCycleDto>();
+    if (unassigned)
+        query = query.Where(j=>j.Assignee != null!);
+    
+    query = query
+        .Include(j => j.AppUser)
+        .ThenInclude(u => u.User)
+        .Include(j => j.IssueTypeObj);
 
-        var bugsQuery = _context.JiraIssues
-            .AsNoTracking()
-            .Where(j => bugTypeIds.Contains(j.IssueType))
-            .Where(j => j.ProjectId != null && j.IssueNum != null)
-            .Select(j => new
+    var rawIssues = await query
+        .Select(j => new
+        {
+            j.Id,
+            j.ProjectId,
+            j.IssueNum,
+            j.Summary,
+            AssigneeName = j.AppUser != null && j.AppUser.User != null 
+                ? j.AppUser.User.DisplayName 
+                : "Unassigned"
+        })
+        .Take(500)
+        .ToListAsync();
+
+    if (!rawIssues.Any())
+        return new List<BugRejectCycleDto>();
+
+    var issueIds = rawIssues.Select(x => x.Id).ToList();
+
+    var rejectedCounts = await _context.ChangeItems
+        .AsNoTracking()
+        .Include(ci => ci.ChangeGroup)
+        .Where(ci => ci.Field == "status" 
+                  && ci.NewString == "Rejected"
+                  && issueIds.Contains(ci.ChangeGroup.IssueId))
+        .GroupBy(ci => ci.ChangeGroup.IssueId)
+        .Select(g => new
+        {
+            IssueId = g.Key,
+            ReopenCount = g.Count()
+        })
+        .ToListAsync();
+
+    var rejectedDict = rejectedCounts.ToDictionary(x => x.IssueId, x => x.ReopenCount);
+
+    var projectIds = rawIssues.Select(x => x.ProjectId!.Value).Distinct().ToList();
+    var projectKeys = await _context.ProjectKeys
+        .AsNoTracking()
+        .Where(pk => projectIds.Contains(pk.ProjectId))
+        .ToDictionaryAsync(pk => pk.ProjectId, pk => pk.ProjectKeyName);
+
+    var result = rawIssues
+        .Select(issue =>
+        {
+            var reopenCount = rejectedDict.GetValueOrDefault(issue.Id, 0);
+            var projectKey = projectKeys.GetValueOrDefault(issue.ProjectId!.Value, "UNKNOWN");
+            var issueKey = $"{projectKey}-{issue.IssueNum}";
+
+            return new
             {
-                j.Id,
-                j.ProjectId,
-                j.IssueNum,
-                j.Summary,
-                j.Assignee
-            });
+                IssueKey = issueKey,
+                ReopenCount = reopenCount,
+                issue.Summary,
+                issue.AssigneeName
+            };
+        })
+        .Where(x => x.ReopenCount > 0)
+        .OrderByDescending(x => x.ReopenCount)
+        .ThenByDescending(x => x.IssueKey)
+        .Take(top)
+        .Select(x => new BugRejectCycleDto
+        {
+            IssueKey = x.IssueKey,
+            ReopenCount = x.ReopenCount,
+            Summary = string.IsNullOrEmpty(x.Summary) ? "" : x.Summary,
+            Assignee = x.AssigneeName
+        })
+        .ToList();
 
-        if (unassigned == true)
-            bugsQuery = bugsQuery.Where(j=>j.Assignee != null!);
-        else if (unassigned == false)
-            bugsQuery = bugsQuery.Where(j => !string.IsNullOrEmpty(j.Assignee));
-
-        var rawBugs = await bugsQuery.Take(500).ToListAsync(); // حداکثر 500 تا برای عملکرد خوب
-
-        if (!rawBugs.Any())
-            return new List<BugRejectCycleDto>();
-
-        var bugIds = rawBugs.Select(b => b.Id).ToList();
-
-        var rejectedCounts = await _context.ChangeItems
-            .AsNoTracking()
-            .Include(ci => ci.ChangeGroup)
-            .Where(ci => ci.Field == "status"
-                         && ci.NewString == "Rejected"
-                         && bugIds.Contains(ci.ChangeGroup.IssueId))
-            .GroupBy(ci => ci.ChangeGroup.IssueId)
-            .Select(g => new
-            {
-                IssueId = g.Key,
-                ReopenCount = g.Count()
-            })
-            .ToListAsync();
-
-        var rejectedDict = rejectedCounts.ToDictionary(x => x.IssueId, x => x.ReopenCount);
-
-        var projectIds = rawBugs.Select(b => b.ProjectId!.Value).Distinct().ToList();
-        var projectKeyDict = await _context.ProjectKeys
-            .AsNoTracking()
-            .Where(pk => projectIds.Contains(pk.ProjectId))
-            .ToDictionaryAsync(pk => pk.ProjectId, pk => pk.ProjectKeyName);
-
-        var assigneeKeys = rawBugs
-            .Where(b => !string.IsNullOrEmpty(b.Assignee))
-            .Select(b => b.Assignee!)
-            .Distinct()
-            .ToList();
-
-        var assigneeNames = await _context.AppUsers
-            .AsNoTracking()
-            .Where(u => assigneeKeys.Contains(u.UserKey))
-            .ToDictionaryAsync(
-                u => u.UserKey,
-                u => u.User?.DisplayName ?? u.UserKey
-            );
-
-        var result = rawBugs
-            .Select(b =>
-            {
-                var reopenCount = rejectedDict.GetValueOrDefault(b.Id, 0);
-                var projectKey = projectKeyDict.GetValueOrDefault(b.ProjectId!.Value, "UNKNOWN");
-                var issueKey = $"{projectKey}-{b.IssueNum}";
-
-                return new BugRejectCycleDto
-                {
-                    IssueKey = issueKey,
-                    ReopenCount = reopenCount,
-                    Summary = string.IsNullOrEmpty(b.Summary) ? "(بدون خلاصه)" : b.Summary,
-                    Assignee = string.IsNullOrEmpty(b.Assignee)
-                        ? "Unassigned"
-                        : assigneeNames.GetValueOrDefault(b.Assignee, "Unknown"),
-                    Url = $"https://your-jira-domain.com/browse/{issueKey}"
-                };
-            })
-            .Where(x => x.ReopenCount > 0) // فقط اونایی که حداقل 1 بار Rejected شدن
-            .OrderByDescending(x => x.ReopenCount)
-            .ThenByDescending(x => x.IssueKey)
-            .Take(top)
-            .ToList();
-
-        return result;
+    return result;
     }
 }

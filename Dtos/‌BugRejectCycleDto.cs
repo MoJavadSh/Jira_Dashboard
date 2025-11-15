@@ -6,5 +6,4 @@ public class BugRejectCycleDto
     public int ReopenCount { get; set; }
     public string Summary { get; set; } = string.Empty;
     public string Assignee { get; set; } = "Unassigned";
-    public string Url { get; set; } = string.Empty;
 }
