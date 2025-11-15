@@ -16,6 +16,8 @@ public class AppDbContext : DbContext
     public DbSet<AppUser> AppUsers { get; set; }
     public DbSet<ChangeGroup> ChangeGroups { get; set; }
     public DbSet<ChangeItem> ChangeItems { get; set; }
+    public DbSet<Project> Projects {get; set;}
+    public DbSet<ProjectKey> ProjectKeys { get; set; }
     
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -32,6 +34,9 @@ public class AppDbContext : DbContext
             entity.Property(e => e.IssueType).HasColumnName("issuetype").HasColumnType("varchar(255)"); // property IssueType has column named issuetyoe in db
             entity.Property(e => e.IssueStatus).HasColumnName("issuestatus").HasColumnType("varchar(255)");
             entity.Property(e => e.Created).HasColumnName("created").HasColumnType("timestamp without time zone");
+            entity.Property(e => e.Summary).HasColumnName("summary").HasColumnType("varchar(255)");
+            entity.Property(e => e.ProjectId).HasColumnName("project").HasColumnType("numeric(18)");
+            entity.Property(e => e.IssueNum).HasColumnName("issuenum").HasColumnType("numeric(18)");
             
             // Relations
             entity.HasOne(j => j.AppUser)
@@ -126,6 +131,28 @@ public class AppDbContext : DbContext
             entity.HasOne(e => e.ChangeGroup)
                 .WithMany()
                 .HasForeignKey(e => e.GroupId);
+        });
+        modelBuilder.Entity<Project>(entity =>
+        {
+            entity.ToTable("project", "public");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnName("id").HasColumnType("bigint");
+            entity.Property(e => e.PName).HasColumnName("pname").HasColumnType("varchar(255)");
+        });
+        modelBuilder.Entity<ProjectKey>(entity =>
+        {
+            entity.ToTable("project_key", "public"); // یا گاهی "customfieldvalue" یا "projectkey"
+            entity.HasKey(e => e.Id);
+            
+            entity.Property(e => e.Id).HasColumnName("id").HasColumnType("bigint");
+            entity.Property(e => e.ProjectId).HasColumnName("project_id").HasColumnType("bigint");
+            entity.Property(e => e.ProjectKeyName).HasColumnName("project_key").HasColumnType("varchar(255)");
+
+            entity.HasOne(e => e.Project)
+                .WithMany()
+                .HasForeignKey(e => e.ProjectId)
+                .HasPrincipalKey(p => p.Id)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }
