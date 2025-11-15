@@ -169,7 +169,7 @@ public class JiraRepository : IJiraRepository
             {
                 int total = g.Sum(x => x.Count);
                 return new IssueTypeProgressDto
-                {
+                 {
                     IssueTypeName = g.Key,
                     Statuses = g.Select(x => new StatusCountDto
                     {
