@@ -47,7 +47,7 @@ public class BugController : ControllerBase
     public async Task<ActionResult<ResponseDto>> GetBugRejectCycleAsync([FromQuery] bool unAssigned = true, int top = 10)
     {
         var result = await _repo.GetRejectedBugCycleAsync(unAssigned,top);
-        var response = GenerateResponse(HttpStatusCode.OK,"",BugText.BugRejectCycle.Title, BugText.BugRejectCycle.Title, result, result.Count);
+        var response = GenerateResponse(HttpStatusCode.OK,"",BugText.BugRejectCycle.Title, BugText.BugRejectCycle.Description, result, result.Count);
         return Ok(response);
     }
     
@@ -58,7 +58,7 @@ public class BugController : ControllerBase
     public async Task<ActionResult<ResponseDto>> GetBugTableAsync([FromQuery] string? statusFilter = null, string sortBy = "Key", bool sortDescending = true, int page = 1, int pageSize = 15)
     {
         var result = await _repo.GetAllBugsTableAsync(statusFilter , sortBy , sortDescending, page , pageSize);
-        var response = GenerateResponse(HttpStatusCode.OK,"","Null", "Null", result, 1);
+        var response = GenerateResponse(HttpStatusCode.OK,"",BugText.BugTable.Title, BugText.BugTable.Description, result, result.Count, page, pageSize);
         return Ok(response);
     }
     
