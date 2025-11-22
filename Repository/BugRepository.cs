@@ -246,8 +246,6 @@ public class BugRepository : IBugRepository
     };
 
     var items = await query
-        .Skip((page - 1) * pageSize)
-        .Take(pageSize)
         .Select(j => new
         {
             j.Id,
@@ -263,6 +261,8 @@ public class BugRepository : IBugRepository
                 : "Unassigned"
         })
         .ToListAsync();
+    
+  
 
     if (!items.Any())
         return new List<BugTableDto>();
@@ -298,7 +298,7 @@ public class BugRepository : IBugRepository
             Labels = string.Join(", ", g.Select(l => l.LabelName).OrderBy(l => l))
         })
         .ToDictionaryAsync(x => x.IssueId, x => x.Labels ?? "-");
-
+    
     var result = items.Select(x => new BugTableDto
     {
         Key = $"{projectKeyDict.GetValueOrDefault(x.ProjectId!.Value, "UNKNOWN")}-{x.IssueNum}",
