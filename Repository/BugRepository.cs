@@ -308,7 +308,7 @@ public class BugRepository : IBugRepository
         Assignee = x.AssigneeName,
         Labels = labelsDict.GetValueOrDefault(x.Id, "-"),
         Created = x.Created,
-        Age = DateTime.Now - x.Created
+        Age = DateTime.UtcNow - x.Created
     }).ToList();
 
     return result;
