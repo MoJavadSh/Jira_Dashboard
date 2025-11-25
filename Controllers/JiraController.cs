@@ -74,7 +74,17 @@ public class JiraController : ControllerBase
         var response = GenerateResponse(HttpStatusCode.OK, "", JiraText.StatusSummary.Title, JiraText.StatusSummary.Description, result, 1);
         return Ok(response);
     }
-
+    
+    /// <summary>
+    /// Table : all issues 
+    /// </summary>
+    [HttpGet("AllIssues")]
+    public async Task<ActionResult<List<BugTableDto>>> GetAllIssuesAsync()
+    {
+        var result = await _repo.GetAllIssueAsync();
+        var response = GenerateResponse(HttpStatusCode.OK, "", JiraText.StatusSummary.Title, "JiraText.StatusSummary.Description", result, result.Count);
+        return Ok(response);
+    }
     private static ResponseDto GenerateResponse(
         HttpStatusCode statusCode,
         string message,

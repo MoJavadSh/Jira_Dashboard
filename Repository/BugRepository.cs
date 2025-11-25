@@ -303,12 +303,12 @@ public class BugRepository : IBugRepository
     {
         Key = $"{projectKeyDict.GetValueOrDefault(x.ProjectId!.Value, "UNKNOWN")}-{x.IssueNum}",
         Summary = x.Summary ?? "Empty",
-        Status = x.StatusName,
+        Progress = x.StatusName,
         Reporter = creatorNames.GetValueOrDefault(x.Creator, "Unknown"),
         Assignee = x.AssigneeName,
         Labels = labelsDict.GetValueOrDefault(x.Id, "-"),
-        Created = x.Created,
-        Age = DateTime.UtcNow - x.Created
+        DateCreated = x.Created,
+        LifeTime = DateTime.UtcNow - x.Created
     }).ToList();
 
     return result;
