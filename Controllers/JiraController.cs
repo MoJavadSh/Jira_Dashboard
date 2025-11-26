@@ -30,7 +30,7 @@ public class JiraController : ControllerBase
         DateTime? createdDate = null,
         DateTime? closedDate = null,
         int page = 1,
-        int perPage = 20
+        int perPage = 10
         )
     {
         var result = await _repo.GetAllIssueAsync(assignee, issueType, progress, issueKey, createdDate, closedDate);
