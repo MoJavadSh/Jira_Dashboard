@@ -169,6 +169,54 @@ public class JiraRepository : IJiraRepository
         }
         return result;
     }
+
+    public async Task<JiraMetadataDto> GetJiraMetadata()
+    {
+        var progressList = await _context.IssueStatuses
+            .AsNoTracking()
+            .Select(s => s.PName)
+            .Distinct()
+            .OrderBy(x => x)
+            .ToListAsync();
+        
+        var issueTypes = await _context.IssueTypes
+            .AsNoTracking()
+            .Select(t => t.PName)
+            .Distinct()
+            .OrderBy(x => x)
+            .ToListAsync();
+        
+        var metadata = new JiraMetadataDto
+        {
+            Progresses = progressList,
+            IssueTypes = issueTypes,
+            
+            Projects = await _context.ProjectKeys
+            .Select(pk => new ProjectDto
+            {
+            Key   = pk.ProjectKeyName,
+            Name  = pk.Project.PName 
+            })
+            .OrderBy(p => p.Key)
+            .ToListAsync(),
+            
+            Assignees = await _context.JiraIssues
+            .Where(j => j.AppUser != null && j.AppUser.User != null)
+            .Select(j => new UserDto
+            {
+            Name = j.AppUser.User.DisplayName,
+            Key = j.AppUser.UserKey
+            })
+            .Distinct()
+            .OrderBy(x => x.Name)
+            .ToListAsync()
+
+
+            
+        };
+        
+        return metadata;
+    }
 }
 
 

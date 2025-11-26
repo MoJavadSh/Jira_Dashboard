@@ -1,5 +1,6 @@
 using JiraDashboard.Dtos;
 using JiraDashboard.Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace JiraDashboard;
 
@@ -14,4 +15,6 @@ public interface IJiraRepository
         DateTime? closedDate = null
         
     );
+
+    Task<JiraMetadataDto> GetJiraMetadata();
 }
