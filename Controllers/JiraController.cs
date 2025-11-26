@@ -27,11 +27,10 @@ public class JiraController : ControllerBase
         string? issueType = null,
         string? progress = null,
         string? keyContains = null,
-        DateTime? filterDate = null,       
-        bool? createdOnDate = null,
-        bool? closedOnDate = null)
+        DateTime? createdDate = null,
+        DateTime? closedDate = null)
     {
-        var result = await _repo.GetAllIssueAsync(assignee, issueType, progress, keyContains, filterDate, createdOnDate, closedOnDate);
+        var result = await _repo.GetAllIssueAsync(assignee, issueType, progress, keyContains, createdDate, closedDate);
         var response = GenerateResponse(HttpStatusCode.OK, "", JiraText.StatusSummary.Title, "JiraText.StatusSummary.Description", result, result.Count);
         return Ok(response);
     }

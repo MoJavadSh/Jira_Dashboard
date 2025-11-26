@@ -10,8 +10,8 @@ public interface IJiraRepository
         string? issueType = null,
         string? progress = null,
         string? keyContains = null,
-        DateTime? filterDate = null,       
-        bool? createdOnDate = null,
-        bool? closedOnDate = null
+        DateTime? createdDate = null,
+        DateTime? closedDate = null
+        
     );
 }

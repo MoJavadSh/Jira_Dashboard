@@ -21,9 +21,8 @@ public class JiraRepository : IJiraRepository
         string? issueType = null,
         string? progress = null,
         string? keyContains = null,
-        DateTime? filterDate = null,
-        bool? createdOnDate = null,
-        bool? closedOnDate = null
+        DateTime? createdDate = null,
+        DateTime? closedDate = null
     )
     {
         var q = _context.JiraIssues
@@ -142,29 +141,30 @@ public class JiraRepository : IJiraRepository
                 .ToList();
         }
         
-        if (filterDate.HasValue)
+        if (createdDate.HasValue || closedDate.HasValue)
         {
-            var start = filterDate.Value.Date;
-            var end = start.AddDays(1);
+            var createdStart = createdDate?.Date;
+            var createdEnd = createdStart?.AddDays(1);
+
+            var closedStart = closedDate?.Date;
+            var closedEnd = closedStart?.AddDays(1);
 
             result = result.Where(r =>
             {
-                var createdMatch = (createdOnDate == true) && 
-                                   r.DateCreated >= start && 
-                                   r.DateCreated < end;
+                bool createdMatch = createdDate.HasValue &&
+                                    r.DateCreated >= createdStart &&
+                                    r.DateCreated < createdEnd;
 
-                var closedMatch = (closedOnDate == true) && 
-                                  r.DateClosed.HasValue && 
-                                  r.DateClosed.Value >= start && 
-                                  r.DateClosed.Value < end;
+                bool closedMatch = closedDate.HasValue &&
+                                   r.DateClosed.HasValue &&
+                                   r.DateClosed.Value >= closedStart &&
+                                   r.DateClosed.Value < closedEnd;
 
-                if (createdOnDate == true && closedOnDate == true)
-                    return createdMatch || closedMatch;
-        
-                if (createdOnDate == true) return createdMatch;
-                if (closedOnDate == true) return closedMatch;
-
-                return true;
+                // اگه هر دو پر باشن → OR
+                // اگه فقط یکی پر باشه → فقط همون
+                return (createdDate.HasValue && closedDate.HasValue)
+                    ? (createdMatch || closedMatch)
+                    : (createdDate.HasValue ? createdMatch : closedMatch);
             }).ToList();
         }
         return result;
