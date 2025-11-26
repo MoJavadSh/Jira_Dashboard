@@ -22,9 +22,16 @@ public class JiraController : ControllerBase
     /// Table : all issues 
     /// </summary>
     [HttpGet("AllIssues")]
-    public async Task<ActionResult<List<BugTableDto>>> GetAllIssuesAsync()
+    public async Task<ActionResult<List<BugTableDto>>> GetAllIssuesAsync([FromQuery]
+        string? assignee = null,
+        string? issueType = null,
+        string? progress = null,
+        string? keyContains = null,
+        DateTime? filterDate = null,       
+        bool? createdOnDate = null,
+        bool? closedOnDate = null)
     {
-        var result = await _repo.GetAllIssueAsync();
+        var result = await _repo.GetAllIssueAsync(assignee, issueType, progress, keyContains, filterDate, createdOnDate, closedOnDate);
         var response = GenerateResponse(HttpStatusCode.OK, "", JiraText.StatusSummary.Title, "JiraText.StatusSummary.Description", result, result.Count);
         return Ok(response);
     }

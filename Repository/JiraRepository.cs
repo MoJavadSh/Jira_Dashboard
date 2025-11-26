@@ -16,14 +16,43 @@ public class JiraRepository : IJiraRepository
         _context = context;
     }
     
-    public async Task<List<BugTableDto>> GetAllIssueAsync()
+    public async Task<List<BugTableDto>> GetAllIssueAsync(
+        string? assignee = null,
+        string? issueType = null,
+        string? progress = null,
+        string? keyContains = null,
+        DateTime? filterDate = null,
+        bool? createdOnDate = null,
+        bool? closedOnDate = null
+    )
     {
-        var query = await _context.JiraIssues
+        var q = _context.JiraIssues
             .AsNoTracking()
             .Include(j => j.IssueStatusObj)
             .Include(issue => issue.IssueTypeObj)
-            .Include(j => j.AppUser).ThenInclude(u => u.User)
-            .Select(j => new
+            .Include(j => j.AppUser)
+            .ThenInclude(u => u.User)
+            .AsQueryable();
+        
+        if (!string.IsNullOrWhiteSpace(assignee))
+        {
+            q = q.Where(j =>
+                j.AppUser != null &&
+                j.AppUser.User != null &&
+                j.AppUser.User.DisplayName == assignee);
+        }
+        
+        if (!string.IsNullOrWhiteSpace(issueType))
+        {
+            q = q.Where(j => j.IssueTypeObj.PName == issueType);
+        }
+        
+        if (!string.IsNullOrWhiteSpace(progress))
+        {
+            q = q.Where(j => j.IssueStatusObj.PName == progress);
+        }
+        
+        var query = await q.Select(j => new
             {
                 j.Id,
                 j.Summary,
@@ -37,6 +66,7 @@ public class JiraRepository : IJiraRepository
                 ? j.AppUser.User.DisplayName : "Unassigned"
             })
             .ToListAsync();
+        
         
         var issueIds = query.Select(x => x.Id).ToList();
         var labels = await _context.Labels
@@ -104,6 +134,39 @@ public class JiraRepository : IJiraRepository
             Key = $"{projectKeyDict.GetValueOrDefault(i.ProjectId!.Value, "UNKNOWN")}-{i.IssueNum}",
             
         }).ToList();
+        
+        if (!string.IsNullOrWhiteSpace(keyContains))
+        {
+            result = result
+                .Where(r => r.Key.Contains(keyContains, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+        
+        if (filterDate.HasValue)
+        {
+            var start = filterDate.Value.Date;
+            var end = start.AddDays(1);
+
+            result = result.Where(r =>
+            {
+                var createdMatch = (createdOnDate == true) && 
+                                   r.DateCreated >= start && 
+                                   r.DateCreated < end;
+
+                var closedMatch = (closedOnDate == true) && 
+                                  r.DateClosed.HasValue && 
+                                  r.DateClosed.Value >= start && 
+                                  r.DateClosed.Value < end;
+
+                if (createdOnDate == true && closedOnDate == true)
+                    return createdMatch || closedMatch;
+        
+                if (createdOnDate == true) return createdMatch;
+                if (closedOnDate == true) return closedMatch;
+
+                return true;
+            }).ToList();
+        }
         return result;
     }
 }

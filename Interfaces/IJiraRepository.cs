@@ -5,5 +5,13 @@ namespace JiraDashboard;
 
 public interface IJiraRepository
 {
-    Task<List<BugTableDto>> GetAllIssueAsync();
+    Task<List<BugTableDto>> GetAllIssueAsync(
+        string? assignee = null,
+        string? issueType = null,
+        string? progress = null,
+        string? keyContains = null,
+        DateTime? filterDate = null,       
+        bool? createdOnDate = null,
+        bool? closedOnDate = null
+    );
 }
