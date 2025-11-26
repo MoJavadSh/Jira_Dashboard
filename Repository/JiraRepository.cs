@@ -160,8 +160,6 @@ public class JiraRepository : IJiraRepository
                                    r.DateClosed.Value >= closedStart &&
                                    r.DateClosed.Value < closedEnd;
 
-                // اگه هر دو پر باشن → OR
-                // اگه فقط یکی پر باشه → فقط همون
                 return (createdDate.HasValue && closedDate.HasValue)
                     ? (createdMatch || closedMatch)
                     : (createdDate.HasValue ? createdMatch : closedMatch);
