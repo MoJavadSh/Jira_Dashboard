@@ -9,7 +9,7 @@ public interface IJiraRepository
         string? assignee = null,
         string? issueType = null,
         string? progress = null,
-        string? keyContains = null,
+        int? keyContains = null,
         DateTime? createdDate = null,
         DateTime? closedDate = null
         

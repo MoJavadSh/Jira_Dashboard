@@ -249,7 +249,7 @@ public class BugRepository : IBugRepository
         .Select(j => new
         {
             j.Id,
-            j.ProjectId,
+            // j.ProjectId,
             j.IssueNum,
             j.Summary,
             j.Creator,
@@ -267,11 +267,12 @@ public class BugRepository : IBugRepository
     if (!items.Any())
         return new List<BugTableDto>();
 
-    var projectIds = items.Select(x => x.ProjectId!.Value).Distinct().ToList();
-    var projectKeyDict = await _context.ProjectKeys
-        .AsNoTracking()
-        .Where(pk => projectIds.Contains(pk.ProjectId))
-        .ToDictionaryAsync(pk => pk.ProjectId, pk => pk.ProjectKeyName);
+    // project key (disabled bcz of filter in jiraRepo)
+    // var projectIds = items.Select(x => x.ProjectId!.Value).Distinct().ToList();
+    // var projectKeyDict = await _context.ProjectKeys
+    //     .AsNoTracking()
+    //     .Where(pk => projectIds.Contains(pk.ProjectId))
+    //     .ToDictionaryAsync(pk => pk.ProjectId, pk => pk.ProjectKeyName);
 
     var creatorKeys = items.Where(x => !string.IsNullOrEmpty(x.Creator))
                            .Select(x => x.Creator!)
@@ -301,7 +302,8 @@ public class BugRepository : IBugRepository
     
     var result = items.Select(x => new BugTableDto
     {
-        Key = $"{projectKeyDict.GetValueOrDefault(x.ProjectId!.Value, "UNKNOWN")}-{x.IssueNum}",
+        // Key = $"{projectKeyDict.GetValueOrDefault(x.ProjectId!.Value, "UNKNOWN")}-{x.IssueNum}",
+        Key = x.IssueNum,
         Summary = x.Summary ?? "Empty",
         Progress = x.StatusName,
         Reporter = creatorNames.GetValueOrDefault(x.Creator, "Unknown"),

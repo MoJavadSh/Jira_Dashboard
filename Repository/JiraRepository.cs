@@ -20,7 +20,7 @@ public class JiraRepository : IJiraRepository
         string? assignee = null,
         string? issueType = null,
         string? progress = null,
-        string? keyContains = null,
+        int? keyContains = null,
         DateTime? createdDate = null,
         DateTime? closedDate = null
     )
@@ -130,14 +130,16 @@ public class JiraRepository : IJiraRepository
             IssueType = i.IssueTypeName,
             DateClosed = closedChanges.GetValueOrDefault(i.Id),
             LifeTime = closedChanges.GetValueOrDefault(i.Id) is DateTime closed ? closed - i.Created : DateTime.UtcNow - i.Created,
-            Key = $"{projectKeyDict.GetValueOrDefault(i.ProjectId!.Value, "UNKNOWN")}-{i.IssueNum}",
+            // Key = $"{projectKeyDict.GetValueOrDefault(i.ProjectId!.Value, "UNKNOWN")}-{i.IssueNum}",
+            Key = i.IssueNum,
             
         }).ToList();
         
-        if (!string.IsNullOrWhiteSpace(keyContains))
+        if (keyContains != null)
         {
             result = result
-                .Where(r => r.Key.Contains(keyContains, StringComparison.OrdinalIgnoreCase))
+                // .Where(r => r.Key.Contains(keyContains, StringComparison.OrdinalIgnoreCase))
+                .Where(r => r.Key == keyContains)
                 .ToList();
         }
         
