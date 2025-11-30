@@ -34,7 +34,7 @@ public class JiraController : ControllerBase
         )
     {
         var result = await _repo.GetAllIssueAsync(assignee, issueType, progress, issueKey, createdDate, closedDate);
-        var s = result.Skip((page - 1) * page)
+        var s = result.Skip((page - 1) * perPage)
             .Take(perPage).ToList();
         var response = GenerateResponse(HttpStatusCode.OK, "", "All Issues", "This table return all Issues", s, result.Count, page, perPage);
         return Ok(response);
