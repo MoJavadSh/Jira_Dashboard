@@ -183,17 +183,18 @@ public class BugRepository : IBugRepository
     var rejectedDict = rejectedCounts.ToDictionary(x => x.IssueId, x => x.ReopenCount);
 
     var projectIds = rawIssues.Select(x => x.ProjectId!.Value).Distinct().ToList();
-    var projectKeys = await _context.ProjectKeys
-        .AsNoTracking()
-        .Where(pk => projectIds.Contains(pk.ProjectId))
-        .ToDictionaryAsync(pk => pk.ProjectId, pk => pk.ProjectKeyName);
+    // var projectKeys = await _context.ProjectKeys
+    //     .AsNoTracking()
+    //     .Where(pk => projectIds.Contains(pk.ProjectId))
+    //     .ToDictionaryAsync(pk => pk.ProjectId, pk => pk.ProjectKeyName);
 
     var result = rawIssues
         .Select(issue =>
         {
             var reopenCount = rejectedDict.GetValueOrDefault(issue.Id, 0);
-            var projectKey = projectKeys.GetValueOrDefault(issue.ProjectId!.Value, "UNKNOWN");
-            var issueKey = $"{projectKey}-{issue.IssueNum}";
+            // var projectKey = projectKeys.GetValueOrDefault(issue.ProjectId!.Value, "UNKNOWN");
+            // var issueKey = $"{projectKey}-{issue.IssueNum}";
+            var issueKey = issue.IssueNum;
 
             return new
             {
