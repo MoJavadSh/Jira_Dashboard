@@ -19,7 +19,10 @@ public class AppDbContext : DbContext
     public DbSet<Project> Projects {get; set;}
     public DbSet<ProjectKey> ProjectKeys { get; set; }
     public DbSet<Label> Labels { get; set; }
-    
+    public DbSet<CustomField> CustomFields { get; set; }
+    public DbSet<CustomFieldValue> CustomFieldValues { get; set; }
+    public DbSet<IssueLink> IssueLinks { get; set; }
+    public DbSet<Component> Components { get; set; }  
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     { 
@@ -39,6 +42,9 @@ public class AppDbContext : DbContext
             entity.Property(e => e.ProjectId).HasColumnName("project").HasColumnType("numeric(18)");
             entity.Property(e => e.IssueNum).HasColumnName("issuenum").HasColumnType("numeric(18)");
             entity.Property(e => e.Creator).HasColumnName("creator");
+            entity.Property(e => e.DueDate).HasColumnName("duedate").HasColumnType("timestamp without time zone");
+            entity.Property(e => e.ResolutionDate).HasColumnName("resolutiondate").HasColumnType("timestamp without time zone");
+            entity.Property(e => e.Component).HasColumnName("component").HasColumnType("numeric(18)");
             
             // Relations
             entity.HasOne(j => j.AppUser)
@@ -61,6 +67,12 @@ public class AppDbContext : DbContext
                 .HasPrincipalKey(s => s.Id)
                 .IsRequired(true)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne(j => j.ComponentNav)
+                .WithMany()
+                .HasForeignKey(j => j.Component)
+                .HasPrincipalKey(c => c.Id)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<CwdUser>(entity =>
@@ -164,6 +176,57 @@ public class AppDbContext : DbContext
             entity.Property(e => e.LabelName).HasColumnName("label").HasColumnType("varchar(255)");
             entity.Property(e => e.IssueId).HasColumnName("issue").HasColumnType("numeric(18)");
             entity.Property(e => e.FieldId).HasColumnName("fieldid").HasColumnType("numeric(18)");
+        });
+        modelBuilder.Entity<CustomField>(entity =>
+        {
+            entity.ToTable("customfield", "public");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnName("id").HasColumnType("varchar(255)");
+            entity.Property(e => e.FieldName).HasColumnName("cfname").HasColumnType("varchar(255)");
+        });
+
+        modelBuilder.Entity<CustomFieldValue>(entity =>
+        {
+            entity.ToTable("customfieldvalue", "public");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnName("id").HasColumnType("bigint");
+            entity.Property(e => e.IssueId).HasColumnName("issue").HasColumnType("bigint");
+            entity.Property(e => e.CustomFieldId).HasColumnName("customfield").HasColumnType("varchar(255)");
+            entity.Property(e => e.DateValue).HasColumnName("datevalue").HasColumnType("timestamp without time zone");
+        });
+        
+        modelBuilder.Entity<IssueLink>(entity =>
+        {
+            entity.ToTable("issuelink", "public");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Source).HasColumnName("source");
+            entity.Property(e => e.Destination).HasColumnName("destination");
+            entity.Property(e => e.LinkType).HasColumnName("linktype");
+            entity.Property(e => e.Sequence).HasColumnName("sequence");
+            entity.Property(e => e.IssueLinkField).HasColumnName("issuelink");
+        });
+        
+        modelBuilder.Entity<Component>(entity =>
+        {
+            entity.ToTable("component", "public");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnName("id").HasColumnType("numeric(18)");
+            entity.Property(e => e.ProjectId).HasColumnName("project").HasColumnType("numeric(18)");
+            entity.Property(e => e.CName).HasColumnName("cname").HasColumnType("varchar(255)");
+            entity.Property(e => e.Description).HasColumnName("description").HasColumnType("varchar(255)");
+            entity.Property(e => e.Url).HasColumnName("url").HasColumnType("varchar(255)");
+            entity.Property(e => e.Lead).HasColumnName("lead").HasColumnType("varchar(255)");
+            entity.Property(e => e.AssigneeType).HasColumnName("assigneetype").HasColumnType("numeric(18)");
+            entity.Property(e => e.Archived).HasColumnName("archived").HasColumnType("boolean");
+            entity.Property(e => e.Deleted).HasColumnName("deleted").HasColumnType("boolean");
+
+            entity.HasOne(c => c.Project)
+                .WithMany()
+                .HasForeignKey(c => c.ProjectId)
+                .HasPrincipalKey(p => p.Id)
+                .OnDelete(DeleteBehavior.Restrict);
+            
         });
     }
 }

@@ -13,9 +13,12 @@ public class JiraIssue
     public long? ProjectId { get; set; }
     public long IssueNum {get; set;}
     public string Creator { get; set; } 
+    public DateTime? DueDate { get; set; }
+    public DateTime? ResolutionDate { get; set; }
+    public long? Component { get; set; }  // ستون component در دیتابیس (numeric(18))    
     
     public AppUser AppUser { get; set; } // AppUser (L Join)
     public IssueType IssueTypeObj { get; set; } //  IssueType (In Join)
     public IssueStatus IssueStatusObj { get; set; } //  IssueStatus (In Join)
-    
+    public Component ComponentNav { get; set; }  // رابطه با component (برای نام CName)
 }

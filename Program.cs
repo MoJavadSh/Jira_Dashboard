@@ -35,6 +35,8 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddScoped<IJiraRepository, JiraRepository>();
 builder.Services.AddScoped<IBugRepository, BugRepository>();
 builder.Services.AddScoped<IOverviewRepository, OverviewRepository>();
+builder.Services.AddScoped<IGanttChartRepository, GanttChartRepository>();
+
 
 
 var app = builder.Build();

@@ -23,4 +23,13 @@
         <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Presentation\appsettings.Development.json" />
+      <_ContentIncludedByDefault Remove="Presentation\appsettings.json" />
+      <_ContentIncludedByDefault Remove="Presentation\obj\Presentation.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="Presentation\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="Presentation\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="Presentation\Properties\launchSettings.json" />
+    </ItemGroup>
+
 </Project>
