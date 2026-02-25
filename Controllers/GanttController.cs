@@ -9,18 +9,18 @@ namespace JiraDashboard.Controllers;
 public class GanttController : ControllerBase
 {
 
-    private readonly IGanttChartRepository _repo;
+    private readonly IGanttService _ganttService;
 
-    public GanttController(IGanttChartRepository repo)
+    public GanttController(IGanttService repo)
     {
-        _repo = repo;
+        _ganttService = repo;
     }
    
     [HttpGet("EpicGantt")]
     [ProducesResponseType(typeof(ResponseDto), StatusCodes.Status200OK)]
     public async Task<ActionResult<ResponseDto>> GetEpicGanttAsync()
     {
-        var result = await _repo.GetEpicGanttDataAsync();
+        var result = await _ganttService.GetEpicGanttDataAsync();
         var response = GenerateResponse(HttpStatusCode.OK, "", "Epic Gantt Chart", "Timeline of Epics", result, result.Count);
         return Ok(response);
     }   
@@ -29,7 +29,7 @@ public class GanttController : ControllerBase
     [ProducesResponseType(typeof(ResponseDto), StatusCodes.Status200OK)]
     public async Task<ActionResult<ResponseDto>> GetEpicDetailAsync([FromQuery] long epicId)
     {
-        var result = await _repo.GetEpicDetailsGanttAsync(epicId);
+        var result = await _ganttService.GetEpicDetailsGanttAsync(epicId);
         var response = GenerateResponse(HttpStatusCode.OK, "", "Epic Gantt Chart", "Timeline of Epics", result, 1);
         return Ok(response);
     }   

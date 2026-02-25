@@ -2,7 +2,9 @@ using System.Reflection;
 using JiraDashboard;
 using JiraDashboard.Data;
 using JiraDashboard.Repository;
+using JiraDashboard.Services;
 using Microsoft.EntityFrameworkCore;
+using IOverviewService = JiraDashboard.IOverviewService;
 
 var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -32,10 +34,12 @@ builder.Services.AddSwaggerGen(options =>
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     options.IncludeXmlComments(xmlPath);
 });
-builder.Services.AddScoped<IJiraRepository, JiraRepository>();
-builder.Services.AddScoped<IBugRepository, BugRepository>();
-builder.Services.AddScoped<IOverviewRepository, OverviewRepository>();
-builder.Services.AddScoped<IGanttChartRepository, GanttChartRepository>();
+
+builder.Services.AddScoped<IRepository, Repository>();
+builder.Services.AddScoped<IJiraService, JiraService>();
+builder.Services.AddScoped<IBugService, BugService>();
+builder.Services.AddScoped<IOverviewService, OverviewService>();
+builder.Services.AddScoped<IGanttService, GanttService>();
 
 
 

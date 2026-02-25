@@ -9,4 +9,5 @@ public interface IOverviewService
     Task<List<IssueTypeCountDto>> GetIssueTypeCountAsync(bool unAssigned);
     Task<List<IssueTypeProgressDto>> GetIssueTypeProgressAsync(string issueType, bool unAssigned);
     Task<OpenClosedDto> GetOpenClosedAsync();
+    
 }
