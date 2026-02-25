@@ -62,7 +62,8 @@ public class JiraRepository : IJiraRepository
                 j.IssueNum,
                 IssueTypeName = j.IssueTypeObj.PName,
                 AssigneeName = j.AppUser != null && j.AppUser.User != null
-                ? j.AppUser.User.DisplayName : "Unassigned"
+                ? j.AppUser.User.DisplayName 
+                : "Unassigned"
             })
             .ToListAsync();
         

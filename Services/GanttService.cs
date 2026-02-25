@@ -1,8 +1,10 @@
 using JiraDashboard.Dtos;
+using JiraDashboard.interfaces;
 using JiraDashboard.Repository;
 using Microsoft.EntityFrameworkCore;
 
 namespace JiraDashboard.Services;
+
 public class GanttService : IGanttService
 {
     private readonly IRepository _repo;
@@ -11,9 +13,6 @@ public class GanttService : IGanttService
     private const long FrontEndId = 10001;
     private const long BackEndId  = 10002;
     private const long QAId       = 10003;
-
-    private const int EpicToStoryLinkType    = 10201;
-    private const int StoryToSubTaskLinkType = 10200;
 
     private static readonly string[] DoneStatuses = { "Done", "Resolved" };
 
@@ -24,12 +23,17 @@ public class GanttService : IGanttService
 
     public async Task<List<GanttDto>> GetEpicGanttDataAsync()
     {
-        var epicTypes  = await _repo.GetIssueTypesAsync("epic");
-        var epicTypeId = epicTypes.FirstOrDefault()?.Id;
+        var epicTypeId = await _repo.Context.IssueTypes
+            .AsNoTracking()
+            .Where(t => t.PName.ToLower() == "epic")
+            .Select(t => t.Id)
+            .FirstOrDefaultAsync();
 
-        if (string.IsNullOrEmpty(epicTypeId)) return new List<GanttDto>();
+        if (string.IsNullOrEmpty(epicTypeId))
+            return new List<GanttDto>();
 
-        var epics = await _repo.GetIssueQuery()
+        var epics = await _repo.Context.JiraIssues
+            .AsNoTracking()
             .Where(j => j.IssueType == epicTypeId)
             .Select(j => new
             {
@@ -42,30 +46,43 @@ public class GanttService : IGanttService
             })
             .ToListAsync();
 
-        if (!epics.Any()) return new List<GanttDto>();
+        if (!epics.Any())
+            return new List<GanttDto>();
 
-        var epicIds        = epics.Select(e => e.Id).ToList();
-        var epicStoryLinks = await _repo.GetIssueLinksAsync(epicIds, EpicToStoryLinkType);
+        var epicIds = epics.Select(e => e.Id).ToList();
+
+        var epicStoryLinks = await _repo.Context.IssueLinks
+            .AsNoTracking()
+            .Where(il => il.LinkType == 10201 && epicIds.Contains(il.Source))
+            .Select(il => new { il.Source, il.Destination })
+            .ToListAsync();
 
         var allStoryIds = epicStoryLinks.Select(l => l.Destination).Distinct().ToList();
+
         var storyToEpic = epicStoryLinks
             .GroupBy(l => l.Destination)
             .ToDictionary(g => g.Key, g => g.First().Source);
 
-        List<long>            allSubTaskIds  = new();
-        Dictionary<long,long> subTaskToStory = new();
+        List<long> allSubTaskIds = new();
+        Dictionary<long, long> subTaskToStory = new();
 
         if (allStoryIds.Any())
         {
-            var storySubLinks = await _repo.GetIssueLinksAsync(allStoryIds, StoryToSubTaskLinkType);
-            allSubTaskIds  = storySubLinks.Select(l => l.Destination).Distinct().ToList();
+            var storySubLinks = await _repo.Context.IssueLinks
+                .AsNoTracking()
+                .Where(il => il.LinkType == 10200 && allStoryIds.Contains(il.Source))
+                .Select(il => new { il.Source, il.Destination })
+                .ToListAsync();
+
+            allSubTaskIds = storySubLinks.Select(l => l.Destination).Distinct().ToList();
             subTaskToStory = storySubLinks
                 .GroupBy(l => l.Destination)
                 .ToDictionary(g => g.Key, g => g.First().Source);
         }
 
         var subTaskStatuses = allSubTaskIds.Any()
-            ? await _repo.GetIssueQuery()
+            ? await _repo.Context.JiraIssues
+                .AsNoTracking()
                 .Where(t => allSubTaskIds.Contains(t.Id))
                 .Select(t => new
                 {
@@ -108,7 +125,8 @@ public class GanttService : IGanttService
 
     public async Task<EpicDetailDto> GetEpicDetailsGanttAsync(long epicId)
     {
-        var epic = await _repo.GetIssueQuery()
+        var epic = await _repo.Context.JiraIssues
+            .AsNoTracking()
             .Where(j => j.Id == epicId
                      && j.IssueTypeObj != null
                      && j.IssueTypeObj.PName.ToLower() == "epic")
@@ -125,19 +143,26 @@ public class GanttService : IGanttService
         if (epic == null)
             return EmptyDetail(epicId, "Epic پیدا نشد");
 
-        var epicLinks = await _repo.GetIssueLinksAsync(new List<long> { epicId }, EpicToStoryLinkType);
-        var storyIds  = epicLinks.Select(l => l.Destination).ToList();
+        var storyIds = await _repo.Context.IssueLinks
+            .AsNoTracking()
+            .Where(il => il.Source == epicId && il.LinkType == 10201)
+            .Select(il => il.Destination)
+            .ToListAsync();
 
         if (!storyIds.Any())
             return EmptyDetail(epicId, epic.Summary, epic.Created, epic.DueDate, epic.ResolutionDate);
 
-        var storySubLinks = await _repo.GetIssueLinksAsync(storyIds, StoryToSubTaskLinkType);
-        var subTaskIds    = storySubLinks.Select(l => l.Destination).ToList();
+        var subTaskIds = await _repo.Context.IssueLinks
+            .AsNoTracking()
+            .Where(il => storyIds.Contains(il.Source) && il.LinkType == 10200)
+            .Select(il => il.Destination)
+            .ToListAsync();
 
         if (!subTaskIds.Any())
             return EmptyDetail(epicId, epic.Summary, epic.Created, epic.DueDate, epic.ResolutionDate);
 
-        var tasks = await _repo.GetIssueQuery()
+        var tasks = await _repo.Context.JiraIssues
+            .AsNoTracking()
             .Where(t => subTaskIds.Contains(t.Id))
             .Select(t => new
             {

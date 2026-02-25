@@ -1,6 +1,7 @@
 using System.Reflection;
 using JiraDashboard;
 using JiraDashboard.Data;
+using JiraDashboard.interfaces;
 using JiraDashboard.Repository;
 using JiraDashboard.Services;
 using Microsoft.EntityFrameworkCore;

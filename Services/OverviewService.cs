@@ -1,4 +1,5 @@
 using JiraDashboard.Dtos;
+using JiraDashboard.interfaces;
 using JiraDashboard.Repository;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,11 +9,6 @@ public class OverviewService : IOverviewService
 {
     private readonly IRepository _repo;
 
-    private static readonly HashSet<string> ClosedStatusNames = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "Done", "Resolved", "Resolve"
-    };
-
     public OverviewService(IRepository repo)
     {
         _repo = repo;
@@ -20,16 +16,19 @@ public class OverviewService : IOverviewService
 
     public async Task<List<UserBarChartDto>> GetUserBarChartAsync(bool unAssigned)
     {
-        var query = _repo.GetIssueQuery()
+        var query = _repo.Context.JiraIssues.AsNoTracking()
+            .Include(task => task.AppUser)
+            .ThenInclude(appUser => appUser.User)
+            .Include(task => task.IssueTypeObj)
             .Where(t => t.IssueTypeObj.PName != "Story");
 
         if (unAssigned)
             query = query.Where(x => x.AppUser != null && x.AppUser.User != null);
 
-        var raw = await query
+        var s = query
             .Select(task => new
             {
-                AssigneeName  = task.AppUser != null && task.AppUser.User != null
+                AssigneeName = task.AppUser != null && task.AppUser.User != null
                     ? task.AppUser.User.DisplayName
                     : "Un Assigned",
                 IssueTypeName = task.IssueTypeObj.PName
@@ -39,92 +38,102 @@ public class OverviewService : IOverviewService
             {
                 g.Key.AssigneeName,
                 g.Key.IssueTypeName,
-                Count = g.Count()
-            })
-            .ToListAsync();
+                count = g.Count()
+            });
 
-        var allUsers      = raw.Select(x => x.AssigneeName).Distinct().ToList();
-        var allIssueTypes = raw.Select(x => x.IssueTypeName).Distinct().ToList();
+        var result = await s.ToListAsync();
 
-        return allUsers.Select(user => new UserBarChartDto
+        var allUsers = result.Select(x => x.AssigneeName).Distinct().ToList();
+        var allIssueTypes = result.Select(x => x.IssueTypeName).Distinct().ToList();
+
+        var completeResult = allUsers.Select(user => new UserBarChartDto
         {
             AssigneeName = user,
-            IssueTypes   = allIssueTypes.Select(issueType => new IssueTypeCountDto
+            IssueTypes = allIssueTypes.Select(x => new IssueTypeCountDto
             {
-                IssueTypeName = issueType,
-                Count         = raw
-                    .Where(r => r.AssigneeName == user && r.IssueTypeName == issueType)
-                    .Select(r => r.Count)
+                IssueTypeName = x,
+                Count = result
+                    .Where(r => r.AssigneeName == user && r.IssueTypeName == x)
+                    .Select(r => r.count)
                     .FirstOrDefault(),
                 Percentage = null
             }).ToList()
         }).ToList();
+
+        return completeResult;
     }
 
     public async Task<List<UserIssueCountDto>> GetUserIssueCountAsync(bool unAssigned)
     {
-        var query = _repo.GetIssueQuery()
+        var tasks = _repo.Context.JiraIssues.AsNoTracking()
             .Where(task => task.IssueTypeObj.PName != "Story");
 
         if (unAssigned)
-            query = query.Where(t => t.AppUser != null && t.AppUser.User != null);
+            tasks = tasks.Where(t => t.AppUser != null && t.AppUser.User != null);
 
-        var grouped = await query
+        tasks = tasks
+            .Include(task => task.AppUser)
+            .ThenInclude(appUser => appUser.User);
+
+        var task = await tasks
             .GroupBy(task =>
                 task.AppUser != null && task.AppUser.User != null
                     ? task.AppUser.User.DisplayName
                     : "Un Assigned")
             .Select(g => new
             {
-                AssigneeName = g.Key,
-                Count        = g.Count()
-            })
-            .ToListAsync();
+                assigneeName = g.Key,
+                count = g.Count()
+            }).ToListAsync();
 
-        var totalIssues = grouped.Sum(r => r.Count);
-
-        return grouped.Select(r => new UserIssueCountDto
+        int totalIssues = task.Sum(r => r.count);
+        var finalResults = task.Select(r => new UserIssueCountDto
         {
-            AssigneeName = r.AssigneeName,
-            IssueCount   = r.Count,
-            Percentage   = totalIssues > 0
-                ? Math.Round((double)r.Count / totalIssues * 100, 1)
-                : 0,
+            AssigneeName = r.assigneeName,
+            IssueCount = r.count,
+            Percentage = totalIssues > 0 ? Math.Round((double)r.count / totalIssues * 100, 1) : 0,
         }).ToList();
+
+        return finalResults;
     }
 
     public async Task<List<IssueTypeCountDto>> GetIssueTypeCountAsync(bool unAssigned)
     {
-        var query = _repo.GetIssueQuery()
+        var tasks = _repo.Context.JiraIssues.AsNoTracking()
             .Where(task => task.IssueTypeObj.PName != "Story");
 
         if (unAssigned)
-            query = query.Where(t => t.AppUser != null && t.AppUser.User != null);
+            tasks = tasks.Where(t => t.AppUser != null && t.AppUser.User != null);
 
-        var grouped = await query
+        tasks = tasks
+            .Include(t => t.IssueTypeObj)
+            .Include(t => t.AppUser)
+            .ThenInclude(appUser => appUser.User);
+
+        var task = await tasks
             .GroupBy(t => t.IssueTypeObj.PName)
             .Select(g => new
             {
                 IssueTypeName = g.Key,
-                Count         = g.Count()
+                Count = g.Count()
             })
             .ToListAsync();
 
-        var totalIssues = grouped.Sum(r => r.Count);
+        int totalIssues = task.Sum(r => r.Count);
 
-        return grouped.Select(r => new IssueTypeCountDto
+        var result = task.Select(r => new IssueTypeCountDto
         {
             IssueTypeName = r.IssueTypeName,
-            Count         = r.Count,
-            Percentage    = totalIssues > 0
-                ? Math.Round((double)r.Count / totalIssues * 100, 1)
-                : 0
+            Count = r.Count,
+            Percentage = totalIssues > 0 ? Math.Round((double)r.Count / totalIssues * 100, 1) : 0
         }).ToList();
+
+        return result;
     }
 
     public async Task<List<IssueTypeProgressDto>> GetIssueTypeProgressAsync(string issueType, bool unAssigned)
     {
-        var query = _repo.GetIssueQuery()
+        var query = _repo.Context.JiraIssues.AsNoTracking()
             .Where(task => task.IssueTypeObj.PName != "Story");
 
         if (!string.IsNullOrWhiteSpace(issueType))
@@ -133,11 +142,16 @@ public class OverviewService : IOverviewService
         if (unAssigned)
             query = query.Where(t => t.AppUser != null && t.AppUser.User != null);
 
+        query = query
+            .Include(t => t.IssueTypeObj)
+            .Include(t => t.IssueStatusObj)
+            .Include(t => t.AppUser).ThenInclude(a => a.User);
+
         var raw = await query
             .Select(t => new
             {
                 IssueTypeName = t.IssueTypeObj.PName,
-                StatusName    = t.IssueStatusObj.PName
+                StatusName = t.IssueStatusObj.PName
             })
             .GroupBy(x => new { x.IssueTypeName, x.StatusName })
             .Select(g => new
@@ -148,30 +162,31 @@ public class OverviewService : IOverviewService
             })
             .ToListAsync();
 
-        return raw
+        var result = raw
             .GroupBy(x => x.IssueTypeName)
             .Select(g =>
             {
-                var total = g.Sum(x => x.Count);
+                int total = g.Sum(x => x.Count);
                 return new IssueTypeProgressDto
                 {
                     IssueTypeName = g.Key,
-                    Statuses      = g.Select(x => new StatusCountDto
+                    Statuses = g.Select(x => new StatusCountDto
                     {
                         StatusName = x.StatusName,
-                        Count      = x.Count,
-                        Percentage = total > 0
-                            ? Math.Round((double)x.Count / total * 100, 1)
-                            : 0
+                        Count = x.Count,
+                        Percentage = total > 0 ? Math.Round((double)x.Count / total * 100, 1) : 0
                     }).ToList()
                 };
             })
             .ToList();
+
+        return result;
     }
 
     public async Task<OpenClosedDto> GetOpenClosedAsync()
     {
-        var issues = await _repo.GetIssueQuery()
+        var issues = await _repo.Context.JiraIssues.AsNoTracking()
+            .Include(t => t.IssueStatusObj)
             .Where(task => task.IssueTypeObj.PName != "Story")
             .Select(t => new
             {
@@ -180,15 +195,21 @@ public class OverviewService : IOverviewService
             })
             .ToListAsync();
 
-        var assignedIssues  = issues.Where(t => !string.IsNullOrWhiteSpace(t.Assignee)).ToList();
+        var closedStatusNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "Done", "Resolved", "Resolve"
+        };
+
+        var assignedIssues = issues.Where(t => !string.IsNullOrWhiteSpace(t.Assignee)).ToList();
         var unassignedCount = issues.Count - assignedIssues.Count;
-        var openCount       = assignedIssues.Count(t => !ClosedStatusNames.Contains(t.StatusName));
-        var closedCount     = assignedIssues.Count(t => ClosedStatusNames.Contains(t.StatusName));
+
+        var openCount = assignedIssues.Count(t => !closedStatusNames.Contains(t.StatusName));
+        var closedCount = assignedIssues.Count(t => closedStatusNames.Contains(t.StatusName));
 
         return new OpenClosedDto
         {
-            Open       = openCount,
-            Closed     = closedCount,
+            Open = openCount,
+            Closed = closedCount,
             Unassigned = unassignedCount
         };
     }
