@@ -11,11 +11,11 @@ namespace JiraDashboard.Controllers;
 public class JiraController : ControllerBase
 {
 
-    private readonly IJiraRepository _repo;
+    private readonly IJiraService _jiraService;
 
-    public JiraController(IJiraRepository repo)
+    public JiraController(IJiraService repo)
     {
-        _repo = repo;
+        _jiraService = repo;
     }
    
     /// <summary>
@@ -33,7 +33,7 @@ public class JiraController : ControllerBase
         int perPage = 10
         )
     {
-        var result = await _repo.GetAllIssueAsync(assignee, issueType, progress, issueKey, createdDate, closedDate);
+        var result = await _jiraService.GetAllIssueAsync(assignee, issueType, progress, issueKey, createdDate, closedDate);
         var s = result.Skip((page - 1) * perPage)
             .Take(perPage).ToList();
         var response = GenerateResponse(HttpStatusCode.OK, "", "All Issues", "This table return all Issues", s, result.Count, page, perPage);
@@ -46,7 +46,7 @@ public class JiraController : ControllerBase
     [HttpGet("MetaData")]
     public async Task<ActionResult<List<BugTableDto>>> GetJiraMetadataAsync()
     {
-        var result = await _repo.GetJiraMetadata();
+        var result = await _jiraService.GetJiraMetadataAsync();
         var response = GenerateResponse(HttpStatusCode.OK, "", "MetaData", "This Datas are from Jira", result, 1);
         return Ok(response);
     }

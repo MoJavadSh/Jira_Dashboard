@@ -9,11 +9,11 @@ namespace JiraDashboard.Controllers;
 [Route("api/[controller]")]
 public class OverviewController : ControllerBase
 {
-    private readonly IOverviewRepository _repository;
+    private readonly IOverviewService _overviewService;
 
-    public OverviewController(IOverviewRepository repository)
+    public OverviewController(IOverviewService repository)
     {
-        _repository = repository;
+        _overviewService = repository;
     }
     
     
@@ -23,7 +23,7 @@ public class OverviewController : ControllerBase
     [HttpGet("UserBarChart")]
     public async Task<ActionResult<ResponseDto>> GetUserBarChart([FromQuery] bool unAssigned = true)
     {
-        var result = await _repository.GetUserBarChartAsync(unAssigned);
+        var result = await _overviewService.GetUserBarChartAsync(unAssigned);
         var response = GenerateResponse(HttpStatusCode.OK, "",JiraText.UserBarChart.Title, JiraText.UserBarChart.Description, result, result.Count);
         return Ok(response);
 
@@ -35,7 +35,7 @@ public class OverviewController : ControllerBase
     [HttpGet("UserIssueCount")]
     public async Task<ActionResult<List<UserIssueCountDto>>> GetUserIssueCountChart([FromQuery] bool unAssigned = true)
     {
-        var result = await _repository.GetUserIssueCountAsync(unAssigned);
+        var result = await _overviewService.GetUserIssueCountAsync(unAssigned);
         var response = GenerateResponse(HttpStatusCode.OK, "",JiraText.UserIssueCount.Title, JiraText.UserIssueCount.Description, result, result.Count);
         return Ok(response);
     }
@@ -46,7 +46,7 @@ public class OverviewController : ControllerBase
     [HttpGet("IssueTypeCount")]
     public async Task<ActionResult<List<IssueTypeCountDto>>> GetIssueTypeCount([FromQuery] bool unAssigned = true)
     {
-        var result = await _repository.GetIssueTypeCountAsync(unAssigned);
+        var result = await _overviewService.GetIssueTypeCountAsync(unAssigned);
         var response = GenerateResponse(HttpStatusCode.OK, "",JiraText.IssueTypeCount.Title, JiraText.IssueTypeCount.Description, result, result.Count);
         return Ok(response);
     }
@@ -58,7 +58,7 @@ public class OverviewController : ControllerBase
     public async Task<ActionResult<List<IssueTypeProgressDto>>> GetIssueTypeProgressChart([FromQuery] string? issueType,
         bool unAssigned = true)
     {
-        var result = await _repository.GetIssueTypeProgressAsync(issueType, unAssigned);
+        var result = await _overviewService.GetIssueTypeProgressAsync(issueType, unAssigned);
         var response = GenerateResponse(HttpStatusCode.OK, "",JiraText.IssueTypeProgress.Title, JiraText.IssueTypeProgress.Description, result, result.Count);
         return Ok(response);
     }
@@ -69,7 +69,7 @@ public class OverviewController : ControllerBase
     [HttpGet("StatusSummary")]
     public async Task<ActionResult<List<OpenClosedDto>>> GetOpenClosedAsync()
     {
-        var result = await _repository.GetOpenClosedAsync();
+        var result = await _overviewService.GetOpenClosedAsync();
         var response = GenerateResponse(HttpStatusCode.OK, "", JiraText.StatusSummary.Title, JiraText.StatusSummary.Description, result, 1);
         return Ok(response);
     }

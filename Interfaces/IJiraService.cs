@@ -10,9 +10,7 @@ public interface IJiraService
         string? progress = null,
         int? keyContains = null,
         DateTime? createdDate = null,
-        DateTime? closedDate = null
-        
-    );
+        DateTime? closedDate = null);
 
-    Task<JiraMetadataDto> GetJiraMetadata();
+    Task<JiraMetadataDto> GetJiraMetadataAsync();
 }

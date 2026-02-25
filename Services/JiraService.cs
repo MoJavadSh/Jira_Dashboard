@@ -1,56 +1,47 @@
-using System.Net;
-using JiraDashboard.Data;
 using JiraDashboard.Dtos;
-using JiraDashboard.Helpers;
-using JiraDashboard.Models;
+using JiraDashboard.interfaces;
+using JiraDashboard.Repository;
 using Microsoft.EntityFrameworkCore;
 
-namespace JiraDashboard.Repository;
+namespace JiraDashboard.Services;
 
-public class JiraRepository : IJiraRepository
+public class JiraService : IJiraService
 {
-    private readonly AppDbContext _context;
+    private readonly IRepository _repo;
 
-    public JiraRepository(AppDbContext context)
+    public JiraService(IRepository repo)
     {
-        _context = context;
+        _repo = repo;
     }
-    
+
     public async Task<List<BugTableDto>> GetAllIssueAsync(
         string? assignee = null,
         string? issueType = null,
         string? progress = null,
         int? keyContains = null,
         DateTime? createdDate = null,
-        DateTime? closedDate = null
-    )
+        DateTime? closedDate = null)
     {
-        var q = _context.JiraIssues
+        var q = _repo.Context.JiraIssues
             .AsNoTracking()
             .Include(j => j.IssueStatusObj)
             .Include(issue => issue.IssueTypeObj)
             .Include(j => j.AppUser)
             .ThenInclude(u => u.User)
             .AsQueryable();
-        
+
         if (!string.IsNullOrWhiteSpace(assignee))
-        {
             q = q.Where(j =>
                 j.AppUser != null &&
                 j.AppUser.User != null &&
                 j.AppUser.User.DisplayName == assignee);
-        }
-        
+
         if (!string.IsNullOrWhiteSpace(issueType))
-        {
             q = q.Where(j => j.IssueTypeObj.PName == issueType);
-        }
-        
+
         if (!string.IsNullOrWhiteSpace(progress))
-        {
             q = q.Where(j => j.IssueStatusObj.PName == progress);
-        }
-        
+
         var query = await q.Select(j => new
             {
                 j.Id,
@@ -62,13 +53,14 @@ public class JiraRepository : IJiraRepository
                 j.IssueNum,
                 IssueTypeName = j.IssueTypeObj.PName,
                 AssigneeName = j.AppUser != null && j.AppUser.User != null
-                ? j.AppUser.User.DisplayName : "Unassigned"
+                    ? j.AppUser.User.DisplayName
+                    : "Unassigned"
             })
             .ToListAsync();
-        
-        
+
         var issueIds = query.Select(x => x.Id).ToList();
-        var labels = await _context.Labels
+
+        var labels = await _repo.Context.Labels
             .AsNoTracking()
             .Where(l => issueIds.Contains(l.IssueId))
             .GroupBy(l => l.IssueId)
@@ -79,75 +71,63 @@ public class JiraRepository : IJiraRepository
             })
             .ToDictionaryAsync(x => x.IssueId, x => x.Labels ?? "-");
 
-
         var doneStatusId = "10001";
-        var closedChanges = await _context.ChangeItems
+        var closedChanges = await _repo.Context.ChangeItems
             .AsNoTracking()
             .Include(ci => ci.ChangeGroup)
-            .Where(ci => ci.Field == "status" 
+            .Where(ci => ci.Field == "status"
                          && doneStatusId.Contains(ci.NewValue)
                          && issueIds.Contains(ci.ChangeGroup.IssueId))
             .GroupBy(ci => ci.ChangeGroup.IssueId)
             .Select(g => new
             {
                 IssueId = g.Key,
-                FirstClosed = g.Min(ci => ci.ChangeGroup.Created)    
+                FirstClosed = g.Min(ci => ci.ChangeGroup.Created)
             })
             .ToDictionaryAsync(x => x.IssueId, x => (DateTime?)x.FirstClosed);
-        
+
         var creatorKeys = query
             .Where(x => !string.IsNullOrEmpty(x.Creator))
             .Select(x => x.Creator!)
             .Distinct()
             .ToList();
-        var repoterUsers = await _context.AppUsers.AsNoTracking()
+
+        var repoterUsers = await _repo.Context.AppUsers.AsNoTracking()
             .Where(u => creatorKeys.Contains(u.UserKey))
             .Select(u => new
             {
                 u.UserKey,
                 DisplayName = u.User != null ? u.User.DisplayName : u.UserKey
             }).ToListAsync();
+
         var repoters = repoterUsers.ToDictionary(x => x.UserKey, x => x.DisplayName);
-        
-        var projectIds = query.Where(x => x.ProjectId.HasValue)
-            .Select(x => x.ProjectId!.Value)
-            .Distinct()
-            .ToList();
-        var projectKeyDict = await _context.ProjectKeys
-            .AsNoTracking()
-            .Where(pk => projectIds.Contains(pk.ProjectId))
-            .ToDictionaryAsync(pk => pk.ProjectId, pk => pk.ProjectKeyName);
-        
-        
-        var result = query.Select(i => new BugTableDto()
+
+        var result = query.Select(i => new BugTableDto
         {
             Summary = i.Summary ?? "No Summary",
             Progress = i.Status,
             Assignee = i.AssigneeName,
-            Reporter = repoters[i.Creator],
+            Reporter = repoters.GetValueOrDefault(i.Creator ?? "", "Unknown"),
             Labels = labels.GetValueOrDefault(i.Id, "-"),
             DateCreated = i.Created,
             IssueType = i.IssueTypeName,
             DateClosed = closedChanges.GetValueOrDefault(i.Id),
-            LifeTime = closedChanges.GetValueOrDefault(i.Id) is DateTime closed ? closed - i.Created : DateTime.UtcNow - i.Created,
-            // Key = $"{projectKeyDict.GetValueOrDefault(i.ProjectId!.Value, "UNKNOWN")}-{i.IssueNum}",
+            LifeTime = closedChanges.GetValueOrDefault(i.Id) is DateTime closed
+                ? closed - i.Created
+                : DateTime.UtcNow - i.Created,
             Key = i.IssueNum,
-            
         }).ToList();
-        
+
         if (keyContains != null)
-        {
             result = result
-                // .Where(r => r.Key.Contains(keyContains, StringComparison.OrdinalIgnoreCase))
                 .Where(r => r.Key == keyContains)
                 .ToList();
-        }
-        
+
         if (createdDate.HasValue || closedDate.HasValue)
         {
             var createdStart = createdDate?.Date;
             var createdEnd = createdStart?.AddDays(1);
-
+            
             var closedStart = closedDate?.Date;
             var closedEnd = closedStart?.AddDays(1);
 
@@ -167,56 +147,52 @@ public class JiraRepository : IJiraRepository
                     : (createdDate.HasValue ? createdMatch : closedMatch);
             }).ToList();
         }
+
         return result;
     }
 
-    public async Task<JiraMetadataDto> GetJiraMetadata()
+    public async Task<JiraMetadataDto> GetJiraMetadataAsync()
     {
-        var progressList = await _context.IssueStatuses
+        var progressList = await _repo.Context.IssueStatuses
             .AsNoTracking()
             .Select(s => s.PName)
             .Distinct()
             .OrderBy(x => x)
             .ToListAsync();
-        
-        var issueTypes = await _context.IssueTypes
+
+        var issueTypes = await _repo.Context.IssueTypes
             .AsNoTracking()
             .Select(t => t.PName)
             .Distinct()
             .OrderBy(x => x)
             .ToListAsync();
-        
+
         var metadata = new JiraMetadataDto
         {
             Progresses = progressList,
             IssueTypes = issueTypes,
-            
-            Projects = await _context.ProjectKeys
-            .Select(pk => new ProjectDto
-            {
-            Key   = pk.ProjectKeyName,
-            Name  = pk.Project.PName 
-            })
-            .OrderBy(p => p.Key)
-            .ToListAsync(),
-            
-            Assignees = await _context.JiraIssues
-            .Where(j => j.AppUser != null && j.AppUser.User != null)
-            .Select(j => new UserDto
-            {
-            Name = j.AppUser.User.DisplayName,
-            Key = j.AppUser.UserKey
-            })
-            .Distinct()
-            .OrderBy(x => x.Name)
-            .ToListAsync()
 
+            Projects = await _repo.Context.ProjectKeys
+                .Select(pk => new ProjectDto
+                {
+                    Key  = pk.ProjectKeyName,
+                    Name = pk.Project.PName
+                })
+                .OrderBy(p => p.Key)
+                .ToListAsync(),
 
-            
+            Assignees = await _repo.Context.JiraIssues
+                .Where(j => j.AppUser != null && j.AppUser.User != null)
+                .Select(j => new UserDto
+                {
+                    Name = j.AppUser.User.DisplayName,
+                    Key  = j.AppUser.UserKey
+                })
+                .Distinct()
+                .OrderBy(x => x.Name)
+                .ToListAsync()
         };
-        
+
         return metadata;
     }
 }
-
-

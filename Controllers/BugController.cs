@@ -9,11 +9,11 @@ namespace JiraDashboard.Controllers;
 [Route("api/[controller]")]
 public class BugController : ControllerBase
 {
-    private readonly IBugRepository _repo;
+    private readonly IBugService _bugService;
 
-    public BugController(IBugRepository repo)
+    public BugController(IBugService repo)
     {
-        _repo = repo;
+        _bugService = repo;
     }
 
     /// <summary>
@@ -22,7 +22,7 @@ public class BugController : ControllerBase
     [HttpGet("BugDaily")]
     public async Task<ActionResult<ResponseDto>> GetBugDailyTrendAsync([FromQuery] bool unAssigned = true)
     {
-        var result = await _repo.GetBugDailyTrendAsync();
+        var result = await _bugService.GetBugDailyTrendAsync();
         var response = GenerateResponse(HttpStatusCode.OK, "", BugText.BugDaily.Title, BugText.BugDaily.Description,
             result, result.Count);
         return Ok(response);
@@ -34,7 +34,7 @@ public class BugController : ControllerBase
     [HttpGet("BugStatus")]
     public async Task<ActionResult<ResponseDto>> GetBugStatus()
     {
-        var result = await _repo.GetBugStatus();
+        var result = await _bugService.GetBugStatusAsync();
         var response = GenerateResponse(HttpStatusCode.OK, "", BugText.BugStatus.Title, BugText.BugStatus.Description,
             result, 1);
         return Ok(response);
@@ -47,7 +47,7 @@ public class BugController : ControllerBase
     public async Task<ActionResult<ResponseDto>> GetBugRejectCycleAsync([FromQuery] bool unAssigned = true,
         int top = 10)
     {
-        var result = await _repo.GetRejectedBugCycleAsync(unAssigned, top);
+        var result = await _bugService.GetRejectedBugCycleAsync(unAssigned, top);
         var response = GenerateResponse(HttpStatusCode.OK, "", BugText.BugRejectCycle.Title,
             BugText.BugRejectCycle.Description, result, result.Count);
         return Ok(response);
@@ -60,7 +60,7 @@ public class BugController : ControllerBase
     public async Task<ActionResult<ResponseDto>> GetBugTableAsync([FromQuery] string? statusFilter = null,
         string sortBy = "Key", bool sortDescending = true, int page = 1, int pageSize = 15)
     {
-        var result = await _repo.GetAllBugsTableAsync(statusFilter, sortBy, sortDescending, page, pageSize);
+        var result = await _bugService.GetAllBugsTableAsync(statusFilter, sortBy, sortDescending, page, pageSize);
         
         var s = result.Skip((page - 1) * pageSize)
             .Take(pageSize).ToList();
