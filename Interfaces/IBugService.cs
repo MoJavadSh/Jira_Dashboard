@@ -1,0 +1,11 @@
+using JiraDashboard.Dtos;
+
+namespace JiraDashboard;
+
+public interface IBugService
+{
+    Task<List<BugDailyTrendDto>> GetBugDailyTrendAsync();
+    Task<BugKpiDto> GetBugStatus();
+    Task<List<BugRejectCycleDto>> GetRejectedBugCycleAsync(bool unassigned , int top );
+    Task<List<BugTableDto>> GetAllBugsTableAsync(string? statusFilter, string sortBy, bool sortDescending, int page, int pageSize);
+}
